@@ -9,6 +9,8 @@ pluginManagement {
 rootProject.name = "kmm-invite-me"
 include(":androidApp")
 include(":shared")
+includeBuild("build-conventions")
+
 
 enableFeaturePreview("VERSION_CATALOGS")
 dependencyResolutionManagement {
