@@ -1,9 +1,12 @@
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
+@Suppress("UnstableApiUsage", "DSL_SCOPE_VIOLATION")
 plugins {
     kotlin("multiplatform")
     kotlin("native.cocoapods")
     id("com.android.library")
+    alias(libs.plugins.kmm.implementation)
+    alias(libs.plugins.sqldelight)
 }
 
 version = "1.0"
@@ -35,8 +38,31 @@ kotlin {
     }
 }
 
+`kmm-implementation`.apply {
+    implementation(common = libs.kotlinx.coroutines)
+    implementation(common = libs.kotlinx.datetime)
+    implementation(common = libs.kotlinx.serialization.json)
+    implementations(
+        common = listOf(libs.ktor.core, libs.ktor.logging, libs.ktor.serialization),
+        android = listOf(libs.ktor.okhttp),
+        ios = listOf(libs.ktor.ios)
+    )
+    implementations(
+        common = listOf(libs.sqldelight.common, libs.sqldelight.extensions),
+        android = listOf(libs.sqldelight.android),
+        ios = listOf(libs.sqldelight.native)
+    )
+}
+
+sqldelight {
+    this.database("AppDataBase") {
+        packageName = "com.voitenko.dev.sqldelight.core"
+        sourceFolders = listOf("kotlin")
+    }
+}
+
 android {
-    compileSdkVersion(31)
+    compileSdk = 31
     sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
     defaultConfig {
         minSdk = 21
