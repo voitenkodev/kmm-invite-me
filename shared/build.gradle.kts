@@ -26,9 +26,11 @@ kotlin {
         summary = "Some description for the Shared Module"
         homepage = "Link to the Shared Module homepage"
         ios.deploymentTarget = "14.1"
-        frameworkName = "shared"
         podfile = project.file("../iosApp/Podfile")
-        framework { baseName = "shared" }
+        framework {
+            baseName = "shared"
+            isStatic = false
+        }
     }
 
     sourceSets {
@@ -56,8 +58,9 @@ kotlin {
 
 sqldelight {
     this.database("AppDataBase") {
-        packageName = "com.voitenko.dev.sqldelight.core"
+        packageName = "com.voitenko.dev.kmminviteme.local"
         sourceFolders = listOf("kotlin")
+        linkSqlite = true
     }
 }
 

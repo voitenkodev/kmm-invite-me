@@ -1,0 +1,149 @@
+import kotlinx.datetime.LocalDateTime;
+import com.voitenko.dev.kmminviteme.local.models.Status;
+
+getLastId:
+SELECT last_insert_rowid();
+
+-------------------------------------------- API EVENT ---------------------------------------------
+
+setEvent: INSERT OR IGNORE
+INTO event(event_id, title, description, date,  event_image)
+VALUES  (NULL,?, ?,?, ?);
+
+setAddress: INSERT OR IGNORE
+INTO address(address_id,address_latitude,address_longitude,address_name)
+VALUES (last_insert_rowid(),? , ? , ?);
+
+updateEvent: INSERT OR IGNORE
+INTO event(event_id, title, description, date,  event_image)
+VALUES ?;
+
+getEventWithGuestsById: SELECT *
+FROM event, address
+LEFT JOIN ticket ON event.event_id = ticket.ticket_event_id
+JOIN guest ON ticket.ticket_guest_id = guest.guest_id
+WHERE event_id = :eventId;
+
+getEventById: SELECT *
+FROM event, address
+WHERE event_id = :eventId;
+
+getEventsByQuery: SELECT *
+FROM event, address
+WHERE lower(event.title) LIKE '%' || :query || '%'
+OR lower(address.address_name) LIKE '%' || :query || '%'
+LIMIT :limit;
+
+getSortedEvents: SELECT *
+FROM event, address
+ORDER BY date ASC;
+
+getEvents: SELECT *
+FROM event, address;
+
+getEventsWithGuests: SELECT *
+FROM event, address
+LEFT JOIN ticket ON event.event_id = ticket.ticket_event_id
+LEFT JOIN guest ON ticket.ticket_guest_id = guest.guest_id;
+
+-------------------------------------------- API GUEST ---------------------------------------------
+
+setGuest: INSERT OR IGNORE
+INTO guest(guest_id, name, email, phone, guest_image)
+VALUES ?;
+
+getGuestWithEvents: SELECT *
+FROM event
+LEFT JOIN ticket ON event.event_id = ticket.ticket_event_id
+JOIN guest ON ticket.ticket_guest_id = guest.guest_id;
+
+getGuestById: SELECT *
+FROM guest
+WHERE guest_id = :guestId;
+
+getGuestByEmail: SELECT *
+FROM guest
+ WHERE email = :email;
+
+getGuestWithEventsById: SELECT *
+FROM guest
+LEFT JOIN ticket ON guest.guest_id = ticket.ticket_guest_id
+JOIN event ON ticket.ticket_event_id = event.event_id
+WHERE guest_id = :guestId;
+
+getGuests: SELECT *
+FROM guest;
+
+getGuestsByQuery: SELECT *
+FROM guest
+WHERE lower(guest.name) LIKE '%' || :query || '%'
+OR lower(guest.email) LIKE '%' || :query || '%'
+OR lower(guest.phone) LIKE '%' || :query || '%'
+LIMIT :limit;
+
+getGuestsWithEvents: SELECT *
+FROM guest
+LEFT JOIN ticket ON guest.guest_id = ticket.ticket_guest_id
+JOIN event ON ticket.ticket_event_id = event.event_id;
+
+------------------------------------------- API TICKET --------------------------------------------
+
+setTicket: INSERT OR IGNORE
+INTO ticket(ticket_event_id, ticket_guest_id, status)
+VALUES ?;
+
+updateTicket: UPDATE ticket
+SET status = :status
+WHERE ticket_event_id = :eventId
+AND ticket_guest_id = :guestId;
+
+getTicket: SELECT *
+FROM ticket
+WHERE ticket_event_id = :eventId
+AND ticket_guest_id = :guestId;
+
+getTicketsByGuestId: SELECT *
+FROM ticket
+WHERE ticket_guest_id = :guestId;
+
+getTickets: SELECT *
+FROM ticket;
+
+getTicketsByEventId: SELECT *
+FROM ticket
+WHERE ticket_event_id = :eventId;
+
+---------------------------------------------- TABLE -----------------------------------------------
+
+CREATE TABLE event(
+    event_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    title TEXT NOT NULL,
+    description TEXT NOT NULL,
+    date TEXT AS LocalDateTime NOT NULL,
+    event_image TEXT
+);
+
+CREATE TABLE address(
+     address_id INTEGER NOT NULL PRIMARY KEY,
+     address_latitude REAL,
+     address_longitude REAL,
+     address_name TEXT NOT NULL,
+     FOREIGN KEY (address_id) REFERENCES event(event_id) ON DELETE CASCADE
+);
+
+CREATE TABLE guest(
+    guest_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    email TEXT NOT NULL,
+    phone TEXT,
+    guest_image TEXT
+);
+
+CREATE TABLE ticket(
+    ticket_event_id INTEGER NOT NULL,
+    ticket_guest_id INTEGER NOT NULL,
+    status TEXT AS Status NOT NULL,
+    PRIMARY KEY(ticket_event_id, ticket_guest_id),
+    FOREIGN KEY (ticket_event_id) REFERENCES event(event_id) ON DELETE CASCADE,
+    FOREIGN KEY (ticket_guest_id) REFERENCES guest(guest_id) ON DELETE CASCADE
+);
