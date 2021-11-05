@@ -1,13 +1,11 @@
 package com.voitenko.dev.kmminviteme.remote
 
-import android.util.Log
 import io.ktor.client.features.*
 import io.ktor.client.features.json.*
 import io.ktor.client.features.json.serializer.*
 import io.ktor.client.features.logging.*
 import io.ktor.client.request.*
 import io.ktor.http.*
-import kotlin.random.Random
 
 internal object Client {
 
@@ -16,7 +14,7 @@ internal object Client {
             level = LogLevel.ALL
             logger = object : Logger {
                 override fun log(message: String) {
-                    Log.d("ktor", message)
+                    println(message)
                 }
             }
         }

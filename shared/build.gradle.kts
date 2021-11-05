@@ -12,6 +12,8 @@ plugins {
 version = "1.0"
 
 kotlin {
+    explicitApi()
+    
     android()
 
     val iosTarget: (String, KotlinNativeTarget.() -> Unit) -> KotlinNativeTarget = when {

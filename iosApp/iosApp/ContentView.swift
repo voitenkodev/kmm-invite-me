@@ -2,7 +2,7 @@ import SwiftUI
 import shared
 
 struct ContentView: View {
-    let status = Status.active
+    
 	var body: some View {
 		Text("asddsadsa")
 	}

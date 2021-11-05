@@ -5,8 +5,8 @@ import com.squareup.sqldelight.db.SqlDriver
 import com.squareup.sqldelight.drivers.native.NativeSqliteDriver
 import com.squareup.sqldelight.drivers.native.wrapConnection
 
-public actual class DatabaseDriverFactory {
-    public actual fun createDriver(): SqlDriver {
+internal actual class DatabaseDriverFactory {
+    internal actual fun createDriver(): SqlDriver {
         val dbConfig = DatabaseConfiguration(
             name = "InviteMe.db",
             version = AppDataBase.Schema.version,

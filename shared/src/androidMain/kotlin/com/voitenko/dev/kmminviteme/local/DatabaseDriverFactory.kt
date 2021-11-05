@@ -5,8 +5,8 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import com.squareup.sqldelight.android.AndroidSqliteDriver
 import com.squareup.sqldelight.db.SqlDriver
 
-public actual class DatabaseDriverFactory(private val context: Context) {
-    public actual fun createDriver(): SqlDriver = AndroidSqliteDriver(
+internal actual class DatabaseDriverFactory(private val context: Context) {
+    internal actual fun createDriver(): SqlDriver = AndroidSqliteDriver(
         AppDataBase.Schema,
         context,
         "InviteMe.db",
