@@ -2,9 +2,9 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
 @Suppress("UnstableApiUsage", "DSL_SCOPE_VIOLATION")
 plugins {
-    kotlin("multiplatform")
-    kotlin("native.cocoapods")
-    id("com.android.library")
+    alias(libs.plugins.kotlin.multiplatform)
+    alias(libs.plugins.kotlin.native)
+    alias(libs.plugins.android.library)
     alias(libs.plugins.kmm.implementation)
     alias(libs.plugins.sqldelight)
 }
@@ -13,16 +13,8 @@ version = "1.0"
 
 kotlin {
     explicitApi()
-    
-    android()
-
-    val iosTarget: (String, KotlinNativeTarget.() -> Unit) -> KotlinNativeTarget = when {
-        System.getenv("SDK_NAME")?.startsWith("iphoneos") == true -> ::iosArm64
-        System.getenv("NATIVE_ARCH")?.startsWith("arm") == true -> ::iosSimulatorArm64
-        else -> ::iosX64
-    }
-
-    iosTarget("ios") {}
+    useAndroid()
+    useIos()
 
     cocoapods {
         summary = "Some description for the Shared Module"
@@ -66,11 +58,23 @@ sqldelight {
     }
 }
 
-android {
-    compileSdk = 31
-    sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
-    defaultConfig {
-        minSdk = 21
-        targetSdk = 31
+fun org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension.useAndroid() = android {
+    this.project.android {
+        compileSdk = 31
+        sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
+        defaultConfig {
+            minSdk = 21
+            targetSdk = 31
+        }
     }
+}
+
+fun org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension.useIos() {
+    val iosTarget: (String, KotlinNativeTarget.() -> Unit) -> KotlinNativeTarget = when {
+        System.getenv("SDK_NAME")?.startsWith("iphoneos") == true -> ::iosArm64
+        System.getenv("NATIVE_ARCH")?.startsWith("arm") == true -> ::iosSimulatorArm64
+        else -> ::iosX64
+    }
+
+    iosTarget("ios") {}
 }

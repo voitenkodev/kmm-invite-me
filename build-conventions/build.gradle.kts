@@ -2,7 +2,6 @@ plugins { `kotlin-dsl` }
 
 version = "1.0"
 
-
 gradlePlugin.plugins.register("library.kmm.sharing") {
     id = "library.kmm.sharing"
     implementationClass = "LibrarySharing"

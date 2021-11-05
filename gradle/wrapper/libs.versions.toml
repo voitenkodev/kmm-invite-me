@@ -65,5 +65,10 @@ coil-tooling = { module = "com.google.accompanist:accompanist-coil", version.ref
 kmm-convention = { id = "convention.kmm", version = "1.0" }
 kmm-implementation = { id = "library.kmm.sharing", version = "1.0" }
 android-application = { id = "com.android.application", version.ref = "android-gradle-vers" }
+
+kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin-vers" }
+kotlin-native = { id = "org.jetbrains.kotlin.native.cocoapods", version.ref = "kotlin-vers" }
+android-library = { id = "com.android.library", version.ref = "android-gradle-vers" }
+android-app = { id = "com.android.application", version.ref = "android-gradle-vers" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin-vers" }
 sqldelight = { id = "com.squareup.sqldelight", version.ref = "sqldelight-vers" }
