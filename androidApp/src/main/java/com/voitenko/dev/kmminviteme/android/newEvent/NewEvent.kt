@@ -55,7 +55,7 @@ private fun Content(vm: NewEventVM) = Root(
     },
     footer = {
         ButtonOk(modifier = Modifier.padding(top = 8.dp)) {
-            vm.want(NewEventVM.TAG.TITLE, ExpandInputFeature.Wish.Expand)
+            vm.send(NewEventVM.Event.ButtonClick)
         }
     }
 ) {
@@ -70,7 +70,9 @@ private fun Content(vm: NewEventVM) = Root(
     )
 
     ExpandInputBlock(
-        modifier = Modifier.padding(top = 4.dp),
+        modifier = Modifier
+            .weight(1f, false)
+            .padding(top = 4.dp),
         state = vm.state.description,
         onValueChange = {
             vm.want(NewEventVM.TAG.DESCRIPTION, ExpandInputFeature.Wish.SetText(it))

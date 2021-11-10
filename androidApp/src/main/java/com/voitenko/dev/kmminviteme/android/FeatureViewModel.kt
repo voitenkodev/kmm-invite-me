@@ -8,7 +8,13 @@ import com.voitenko.dev.kmminviteme.mvi.feature.Feature
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
-abstract class FeatureViewModel<Model> : ViewModel() {
+typealias Splitter<Event, State> = (event: Event, state: State) -> Unit
+
+abstract class FeatureViewModel<Event, Model>() : ViewModel() {
+
+    interface Event
+
+    abstract fun send(event: FeatureViewModel.Event)
 
     abstract val processor: FeatureBuilder<Model>
 

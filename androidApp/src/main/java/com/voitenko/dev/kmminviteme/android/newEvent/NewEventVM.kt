@@ -4,15 +4,15 @@ import android.net.Uri
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Image
 import androidx.lifecycle.viewModelScope
+import com.voitenko.dev.kmminviteme.android.FeatureViewModel
 import com.voitenko.dev.kmminviteme.android.features.calendarPicker.CalendarPickerFeature
 import com.voitenko.dev.kmminviteme.android.features.expandImagePicker.ExpandImagePickFeature
 import com.voitenko.dev.kmminviteme.android.features.expandTextInput.ExpandInputFeature
-import com.voitenko.dev.kmminviteme.android.FeatureViewModel
 import com.voitenko.dev.kmminviteme.mvi.builder.FeatureTag
 import com.voitenko.dev.kmminviteme.mvi.createFeatureBuilder
 import com.voitenko.dev.kmminviteme.mvi.share
 
-class NewEventVM : FeatureViewModel<NewEventVM.NewEventState>() {
+class NewEventVM : FeatureViewModel<NewEventVM.Event, NewEventVM.NewEventState>() {
 
     enum class TAG : FeatureTag {
         TITLE,
@@ -21,6 +21,35 @@ class NewEventVM : FeatureViewModel<NewEventVM.NewEventState>() {
         LOCATION,
         IMAGE,
         CALENDAR_PICKER,
+    }
+
+
+    sealed class Event : FeatureViewModel.Event {
+        object ButtonClick : Event()
+    }
+
+    override fun send(event: FeatureViewModel.Event) {
+        when (event) {
+            Event.ButtonClick -> {
+                when {
+                    state.title.expander.isOpened.not() -> {
+                        want(TAG.TITLE, ExpandInputFeature.Wish.Expand)
+                    }
+                    state.description.expander.isOpened.not() -> {
+                        want(TAG.DESCRIPTION, ExpandInputFeature.Wish.Expand)
+                    }
+                    state.date.expander.isOpened.not() -> {
+                        want(TAG.DATE, ExpandInputFeature.Wish.Expand)
+                    }
+                    state.location.expander.isOpened.not() -> {
+                        want(TAG.LOCATION, ExpandInputFeature.Wish.Expand)
+                    }
+                    state.image.expander.isOpened.not() -> {
+                        want(TAG.IMAGE, ExpandImagePickFeature.Wish.Expand)
+                    }
+                }
+            }
+        }
     }
 
     override val processor = viewModelScope.createFeatureBuilder(NewEventState())
@@ -40,13 +69,22 @@ class NewEventVM : FeatureViewModel<NewEventVM.NewEventState>() {
         .obtain<ExpandInputFeature.State>(TAG.TITLE) {
             if (it.input.text.isNotEmpty()) want(TAG.TITLE, ExpandInputFeature.Wish.HideError)
         }.obtain<ExpandInputFeature.State>(TAG.DESCRIPTION) {
-            if (it.input.text.isNotEmpty()) want(TAG.DESCRIPTION, ExpandInputFeature.Wish.HideError)
+            if (it.input.text.isNotEmpty()) want(
+                TAG.DESCRIPTION,
+                ExpandInputFeature.Wish.HideError
+            )
         }.obtain<ExpandInputFeature.State>(TAG.DATE) {
             if (it.input.text.isNotEmpty()) want(TAG.DATE, ExpandInputFeature.Wish.HideError)
         }.obtain<ExpandInputFeature.State>(TAG.LOCATION) {
-            if (it.input.text.isNotEmpty()) want(TAG.LOCATION, ExpandInputFeature.Wish.HideError)
+            if (it.input.text.isNotEmpty()) want(
+                TAG.LOCATION,
+                ExpandInputFeature.Wish.HideError
+            )
         }.obtain<ExpandImagePickFeature.State>(TAG.IMAGE) {
-            if (it.image.image != Uri.EMPTY) want(TAG.IMAGE, ExpandImagePickFeature.Wish.HideError)
+            if (it.image.image != Uri.EMPTY) want(
+                TAG.IMAGE,
+                ExpandImagePickFeature.Wish.HideError
+            )
         }
 
     data class NewEventState(
