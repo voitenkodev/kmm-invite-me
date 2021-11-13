@@ -35,7 +35,7 @@ public interface FeatureBuilder<Model> {
      * @param lambda with  [FeatureBuilder] with [Model]
      **/
 
-    public fun <State : Feature.State> obtain(
+    public fun <State : Feature.State> automatically(
         tag: FeatureTag,
         obtain: FeatureBuilder<Model>.(State) -> Unit
     ): FeatureBuilder<Model>

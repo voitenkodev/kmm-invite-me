@@ -28,7 +28,7 @@ internal class FeatureBuilderImpl<Model> private constructor(
         from<Feature<Feature.Wish, *, News>>(tag).news
 
     @Suppress("UNCHECKED_CAST")
-    override fun <State : Feature.State> obtain(
+    override fun <State : Feature.State> automatically(
         tag: FeatureTag, obtain: FeatureBuilder<Model>.(State) -> Unit
     ) = apply {
         (obtain as? FeatureBuilderImpl<Model>.(Feature.State) -> Unit)?.let {

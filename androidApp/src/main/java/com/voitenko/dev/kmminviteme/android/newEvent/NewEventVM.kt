@@ -23,33 +23,56 @@ class NewEventVM : FeatureViewModel<NewEventVM.Event, NewEventVM.NewEventState>(
         CALENDAR_PICKER,
     }
 
-
     sealed class Event : FeatureViewModel.Event {
-        object ButtonClick : Event()
+        object ClickGotIt : Event()
+        data class WriteTitle(val t: String) : Event()
+        data class WriteDescription(val t: String) : Event()
+        object ClickDate : Event()
+        object ClickLocation : Event()
+        object ClickImage : Event()
+        data class PutImage(val image: Uri) : Event()
     }
 
-    override fun send(event: FeatureViewModel.Event) {
-        when (event) {
-            Event.ButtonClick -> {
-                when {
-                    state.title.expander.isOpened.not() -> {
-                        want(TAG.TITLE, ExpandInputFeature.Wish.Expand)
-                    }
-                    state.description.expander.isOpened.not() -> {
-                        want(TAG.DESCRIPTION, ExpandInputFeature.Wish.Expand)
-                    }
-                    state.date.expander.isOpened.not() -> {
-                        want(TAG.DATE, ExpandInputFeature.Wish.Expand)
-                    }
-                    state.location.expander.isOpened.not() -> {
-                        want(TAG.LOCATION, ExpandInputFeature.Wish.Expand)
-                    }
-                    state.image.expander.isOpened.not() -> {
-                        want(TAG.IMAGE, ExpandImagePickFeature.Wish.Expand)
-                    }
+    override fun send(event: FeatureViewModel.Event) = when (event) {
+        is Event.ClickGotIt -> {
+            when {
+                state.title.expander.isOpened.not() -> {
+                    want(TAG.TITLE, ExpandInputFeature.Wish.Expand)
                 }
+                state.description.expander.isOpened.not() -> {
+                    want(TAG.DESCRIPTION, ExpandInputFeature.Wish.Expand)
+                }
+                state.date.expander.isOpened.not() -> {
+                    want(TAG.DATE, ExpandInputFeature.Wish.Expand)
+                }
+                state.location.expander.isOpened.not() -> {
+                    want(TAG.LOCATION, ExpandInputFeature.Wish.Expand)
+                }
+                state.image.expander.isOpened.not() -> {
+                    want(TAG.IMAGE, ExpandImagePickFeature.Wish.Expand)
+                }
+                else -> Unit
             }
         }
+        is Event.WriteTitle -> {
+            want(TAG.TITLE, ExpandInputFeature.Wish.SetText(event.t))
+        }
+        is Event.WriteDescription -> {
+            want(TAG.DESCRIPTION, ExpandInputFeature.Wish.SetText(event.t))
+        }
+        is Event.ClickDate -> {
+            want(TAG.CALENDAR_PICKER, CalendarPickerFeature.Wish.OpenSheet)
+        }
+        is Event.ClickLocation -> {
+            want(TAG.CALENDAR_PICKER, CalendarPickerFeature.Wish.OpenSheet)
+        }
+        is Event.ClickImage -> {
+            want(TAG.IMAGE, ExpandImagePickFeature.Wish.Pick)
+        }
+        is Event.PutImage -> {
+            want(TAG.IMAGE, ExpandImagePickFeature.Wish.SetImage(event.image))
+        }
+        else -> Unit
     }
 
     override val processor = viewModelScope.createFeatureBuilder(NewEventState())
@@ -66,25 +89,21 @@ class NewEventVM : FeatureViewModel<NewEventVM.Event, NewEventVM.NewEventState>(
         }.provide(TAG.CALENDAR_PICKER) {
             CalendarPickerFeature(this, it.calendarPicker).share { copy(calendarPicker = it) }
         }.build()
-        .obtain<ExpandInputFeature.State>(TAG.TITLE) {
-            if (it.input.text.isNotEmpty()) want(TAG.TITLE, ExpandInputFeature.Wish.HideError)
-        }.obtain<ExpandInputFeature.State>(TAG.DESCRIPTION) {
-            if (it.input.text.isNotEmpty()) want(
-                TAG.DESCRIPTION,
-                ExpandInputFeature.Wish.HideError
-            )
-        }.obtain<ExpandInputFeature.State>(TAG.DATE) {
-            if (it.input.text.isNotEmpty()) want(TAG.DATE, ExpandInputFeature.Wish.HideError)
-        }.obtain<ExpandInputFeature.State>(TAG.LOCATION) {
-            if (it.input.text.isNotEmpty()) want(
-                TAG.LOCATION,
-                ExpandInputFeature.Wish.HideError
-            )
-        }.obtain<ExpandImagePickFeature.State>(TAG.IMAGE) {
-            if (it.image.image != Uri.EMPTY) want(
-                TAG.IMAGE,
-                ExpandImagePickFeature.Wish.HideError
-            )
+        .automatically<ExpandInputFeature.State>(TAG.TITLE) {
+            if (it.input.text.isNotEmpty())
+                want(TAG.TITLE, ExpandInputFeature.Wish.HideError)
+        }.automatically<ExpandInputFeature.State>(TAG.DESCRIPTION) {
+            if (it.input.text.isNotEmpty())
+                want(TAG.DESCRIPTION, ExpandInputFeature.Wish.HideError)
+        }.automatically<ExpandInputFeature.State>(TAG.DATE) {
+            if (it.input.text.isNotEmpty())
+                want(TAG.DATE, ExpandInputFeature.Wish.HideError)
+        }.automatically<ExpandInputFeature.State>(TAG.LOCATION) {
+            if (it.input.text.isNotEmpty())
+                want(TAG.LOCATION, ExpandInputFeature.Wish.HideError)
+        }.automatically<ExpandImagePickFeature.State>(TAG.IMAGE) {
+            if (it.image.image != Uri.EMPTY)
+                want(TAG.IMAGE, ExpandImagePickFeature.Wish.HideError)
         }
 
     data class NewEventState(

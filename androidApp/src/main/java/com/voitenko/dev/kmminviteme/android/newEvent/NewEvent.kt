@@ -16,24 +16,20 @@ import com.voitenko.dev.kmminviteme.android.JustOnce
 import com.voitenko.dev.kmminviteme.android.common.base.Title
 import com.voitenko.dev.kmminviteme.android.common.base.ToolBar
 import com.voitenko.dev.kmminviteme.android.common.base.box.Root
+import com.voitenko.dev.kmminviteme.android.common.theme.AppTheme
 import com.voitenko.dev.kmminviteme.android.contentLaunch
 import com.voitenko.dev.kmminviteme.android.features.calendarPicker.CalendarPickerBock
 import com.voitenko.dev.kmminviteme.android.features.calendarPicker.CalendarPickerFeature
 import com.voitenko.dev.kmminviteme.android.features.expandImagePicker.ExpandImagePickBlock
 import com.voitenko.dev.kmminviteme.android.features.expandImagePicker.ExpandImagePickFeature
 import com.voitenko.dev.kmminviteme.android.features.expandTextInput.ExpandInputBlock
-import com.voitenko.dev.kmminviteme.android.features.expandTextInput.ExpandInputFeature
-import com.voitenko.dev.kmminviteme.android.common.theme.AppTheme
 
 @Composable
 fun NewEvent(navController: NavController, vm: NewEventVM = viewModel()) {
 
     val state = vm.processor.state.collectAsState()
 
-    val launcher =
-        contentLaunch {
-            vm.want(NewEventVM.TAG.IMAGE, ExpandImagePickFeature.Wish.SetImage(it))
-        }
+    val launcher = contentLaunch { vm.send(NewEventVM.Event.PutImage(it)) }
 
     JustOnce {
         vm.news<ExpandImagePickFeature.News.Pick>(NewEventVM.TAG.IMAGE) {
@@ -55,7 +51,7 @@ private fun Content(vm: NewEventVM) = Root(
     },
     footer = {
         ButtonOk(modifier = Modifier.padding(top = 8.dp)) {
-            vm.send(NewEventVM.Event.ButtonClick)
+            vm.send(NewEventVM.Event.ClickGotIt)
         }
     }
 ) {
@@ -64,9 +60,7 @@ private fun Content(vm: NewEventVM) = Root(
     ExpandInputBlock(
         modifier = Modifier.padding(top = 4.dp),
         state = vm.state.title,
-        onValueChange = {
-            vm.want(NewEventVM.TAG.TITLE, ExpandInputFeature.Wish.SetText(it))
-        }
+        onValueChange = { vm.send(NewEventVM.Event.WriteTitle(it)) }
     )
 
     ExpandInputBlock(
@@ -74,32 +68,24 @@ private fun Content(vm: NewEventVM) = Root(
             .weight(1f, false)
             .padding(top = 4.dp),
         state = vm.state.description,
-        onValueChange = {
-            vm.want(NewEventVM.TAG.DESCRIPTION, ExpandInputFeature.Wish.SetText(it))
-        },
+        onValueChange = { vm.send(NewEventVM.Event.WriteDescription(it)) },
     )
 
     ExpandInputBlock(
         modifier = Modifier.padding(top = 4.dp),
         state = vm.state.date,
-        onClick = {
-            vm.want(NewEventVM.TAG.CALENDAR_PICKER, CalendarPickerFeature.Wish.OpenSheet)
-        }
+        onClick = { vm.send(NewEventVM.Event.ClickDate) }
     )
     ExpandInputBlock(
         modifier = Modifier.padding(top = 4.dp),
         state = vm.state.location,
-        onClick = {
-            vm.want(NewEventVM.TAG.CALENDAR_PICKER, CalendarPickerFeature.Wish.OpenSheet)
-        }
+        onClick = { vm.send(NewEventVM.Event.ClickLocation) }
     )
 
     ExpandImagePickBlock(
         modifier = Modifier.padding(top = 4.dp),
         state = vm.state.image,
-        onClick = {
-            vm.want(NewEventVM.TAG.IMAGE, ExpandImagePickFeature.Wish.Pick)
-        },
+        onClick = { vm.send(NewEventVM.Event.ClickImage) },
     )
 }
 
