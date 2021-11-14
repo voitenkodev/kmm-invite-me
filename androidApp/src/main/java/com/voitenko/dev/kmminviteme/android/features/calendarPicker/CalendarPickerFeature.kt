@@ -3,14 +3,11 @@ package com.voitenko.dev.kmminviteme.android.features.calendarPicker
 import com.voitenko.dev.kmminviteme.mvi.feature.Actor
 import com.voitenko.dev.kmminviteme.mvi.feature.Feature
 import com.voitenko.dev.kmminviteme.mvi.feature.Reducer
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.flowOf
 
 class CalendarPickerFeature constructor(
-    scope: CoroutineScope,
     initial: State = State()
 ) : Feature<CalendarPickerFeature.Wish, CalendarPickerFeature.State, Nothing>(
-    scope = scope,
     initial = initial,
     actor = ActorImpl(),
     reducer = ReducerImpl(),

@@ -8,14 +8,11 @@ import com.voitenko.dev.kmminviteme.mvi.feature.Actor
 import com.voitenko.dev.kmminviteme.mvi.feature.Feature
 import com.voitenko.dev.kmminviteme.mvi.feature.NewsPublisher
 import com.voitenko.dev.kmminviteme.mvi.feature.Reducer
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.flowOf
 
 class ExpandImagePickFeature(
-    scope: CoroutineScope,
     initial: State = State()
 ) : Feature<ExpandImagePickFeature.Wish, ExpandImagePickFeature.State, ExpandImagePickFeature.News>(
-    scope = scope,
     initial = initial,
     actor = ActorImpl(),
     reducer = ReducerImpl(),

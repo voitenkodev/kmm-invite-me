@@ -9,19 +9,12 @@ import com.voitenko.dev.kmminviteme.android.features.calendarPicker.CalendarPick
 import com.voitenko.dev.kmminviteme.android.features.expandImagePicker.ExpandImagePickFeature
 import com.voitenko.dev.kmminviteme.android.features.expandTextInput.ExpandInputFeature
 import com.voitenko.dev.kmminviteme.mvi.builder.FeatureTag
-import com.voitenko.dev.kmminviteme.mvi.createFeatureBuilder
-import com.voitenko.dev.kmminviteme.mvi.share
+import com.voitenko.dev.kmminviteme.mvi.builder.MviProcessor
+import com.voitenko.dev.kmminviteme.mvi.push
 
 class NewEventVM : FeatureViewModel<NewEventVM.Event, NewEventVM.NewEventState>() {
 
-    enum class TAG : FeatureTag {
-        TITLE,
-        DESCRIPTION,
-        DATE,
-        LOCATION,
-        IMAGE,
-        CALENDAR_PICKER,
-    }
+    enum class TAG : FeatureTag { TITLE, DESCRIPTION, DATE, LOCATION, IMAGE, CALENDAR_PICKER }
 
     sealed class Event : FeatureViewModel.Event {
         object ClickGotIt : Event()
@@ -33,62 +26,64 @@ class NewEventVM : FeatureViewModel<NewEventVM.Event, NewEventVM.NewEventState>(
         data class PutImage(val image: Uri) : Event()
     }
 
-    override fun send(event: FeatureViewModel.Event) = when (event) {
-        is Event.ClickGotIt -> {
-            when {
-                state.title.expander.isOpened.not() -> {
-                    want(TAG.TITLE, ExpandInputFeature.Wish.Expand)
+    override fun send(event: FeatureViewModel.Event) {
+        when (event) {
+            is Event.ClickGotIt -> {
+                when {
+                    state.title.expander.isOpened.not() -> {
+                        want(TAG.TITLE, ExpandInputFeature.Wish.Expand)
+                    }
+                    state.description.expander.isOpened.not() -> {
+                        want(TAG.DESCRIPTION, ExpandInputFeature.Wish.Expand)
+                    }
+                    state.date.expander.isOpened.not() -> {
+                        want(TAG.DATE, ExpandInputFeature.Wish.Expand)
+                    }
+                    state.location.expander.isOpened.not() -> {
+                        want(TAG.LOCATION, ExpandInputFeature.Wish.Expand)
+                    }
+                    state.image.expander.isOpened.not() -> {
+                        want(TAG.IMAGE, ExpandImagePickFeature.Wish.Expand)
+                    }
+                    else -> Unit
                 }
-                state.description.expander.isOpened.not() -> {
-                    want(TAG.DESCRIPTION, ExpandInputFeature.Wish.Expand)
-                }
-                state.date.expander.isOpened.not() -> {
-                    want(TAG.DATE, ExpandInputFeature.Wish.Expand)
-                }
-                state.location.expander.isOpened.not() -> {
-                    want(TAG.LOCATION, ExpandInputFeature.Wish.Expand)
-                }
-                state.image.expander.isOpened.not() -> {
-                    want(TAG.IMAGE, ExpandImagePickFeature.Wish.Expand)
-                }
-                else -> Unit
             }
+            is Event.WriteTitle -> {
+                want(TAG.TITLE, ExpandInputFeature.Wish.SetText(event.t))
+            }
+            is Event.WriteDescription -> {
+                want(TAG.DESCRIPTION, ExpandInputFeature.Wish.SetText(event.t))
+            }
+            is Event.ClickDate -> {
+                want(TAG.CALENDAR_PICKER, CalendarPickerFeature.Wish.OpenSheet)
+            }
+            is Event.ClickLocation -> {
+                want(TAG.CALENDAR_PICKER, CalendarPickerFeature.Wish.OpenSheet)
+            }
+            is Event.ClickImage -> {
+                want(TAG.IMAGE, ExpandImagePickFeature.Wish.Pick)
+            }
+            is Event.PutImage -> {
+                want(TAG.IMAGE, ExpandImagePickFeature.Wish.SetImage(event.image))
+            }
+            else -> Unit
         }
-        is Event.WriteTitle -> {
-            want(TAG.TITLE, ExpandInputFeature.Wish.SetText(event.t))
-        }
-        is Event.WriteDescription -> {
-            want(TAG.DESCRIPTION, ExpandInputFeature.Wish.SetText(event.t))
-        }
-        is Event.ClickDate -> {
-            want(TAG.CALENDAR_PICKER, CalendarPickerFeature.Wish.OpenSheet)
-        }
-        is Event.ClickLocation -> {
-            want(TAG.CALENDAR_PICKER, CalendarPickerFeature.Wish.OpenSheet)
-        }
-        is Event.ClickImage -> {
-            want(TAG.IMAGE, ExpandImagePickFeature.Wish.Pick)
-        }
-        is Event.PutImage -> {
-            want(TAG.IMAGE, ExpandImagePickFeature.Wish.SetImage(event.image))
-        }
-        else -> Unit
     }
 
-    override val processor = viewModelScope.createFeatureBuilder(NewEventState())
-        .provide(TAG.TITLE) {
-            ExpandInputFeature(this, it.title).share { copy(title = it) }
-        }.provide(TAG.DESCRIPTION) {
-            ExpandInputFeature(this, it.description).share { copy(description = it) }
-        }.provide(TAG.DATE) {
-            ExpandInputFeature(this, it.date).share { copy(date = it) }
-        }.provide(TAG.LOCATION) {
-            ExpandInputFeature(this, it.location).share { copy(location = it) }
-        }.provide(TAG.IMAGE) {
-            ExpandImagePickFeature(this, it.image).share { copy(image = it) }
-        }.provide(TAG.CALENDAR_PICKER) {
-            CalendarPickerFeature(this, it.calendarPicker).share { copy(calendarPicker = it) }
-        }.build()
+    override val processor = MviProcessor.FeatureProcessor(root = NewEventState())
+        .feature(TAG.TITLE) {
+            ExpandInputFeature(it.title) push { copy(title = it) }
+        }.feature(TAG.DESCRIPTION) {
+            ExpandInputFeature(it.description) push { copy(description = it) }
+        }.feature(TAG.DATE) {
+            ExpandInputFeature(it.date) push { copy(date = it) }
+        }.feature(TAG.LOCATION) {
+            ExpandInputFeature(it.location) push { copy(location = it) }
+        }.feature(TAG.IMAGE) {
+            ExpandImagePickFeature(it.image) push { copy(image = it) }
+        }.feature(TAG.CALENDAR_PICKER) {
+            CalendarPickerFeature(it.calendarPicker) push { copy(calendarPicker = it) }
+        }.launchIn(viewModelScope)
         .automatically<ExpandInputFeature.State>(TAG.TITLE) {
             if (it.input.text.isNotEmpty())
                 want(TAG.TITLE, ExpandInputFeature.Wish.HideError)
