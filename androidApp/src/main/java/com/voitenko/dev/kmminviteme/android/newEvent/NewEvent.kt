@@ -1,24 +1,23 @@
 package com.voitenko.dev.kmminviteme.android.newEvent
 
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Button
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.voitenko.dev.kmminviteme.android.JustOnce
-import com.voitenko.dev.kmminviteme.android.common.base.Title
 import com.voitenko.dev.kmminviteme.android.common.base.ToolBar
 import com.voitenko.dev.kmminviteme.android.common.base.box.Root
+import com.voitenko.dev.kmminviteme.android.common.base.box.ShimmerBox
 import com.voitenko.dev.kmminviteme.android.common.theme.AppTheme
 import com.voitenko.dev.kmminviteme.android.contentLaunch
-import com.voitenko.dev.kmminviteme.android.features.calendarPicker.CalendarPickerBock
+import com.voitenko.dev.kmminviteme.android.features.buttonOk.ButtonOk
+import com.voitenko.dev.kmminviteme.android.features.calendarPicker.CalendarPickerBlock
 import com.voitenko.dev.kmminviteme.android.features.calendarPicker.CalendarPickerFeature
 import com.voitenko.dev.kmminviteme.android.features.expandImagePicker.ExpandImagePickBlock
 import com.voitenko.dev.kmminviteme.android.features.expandImagePicker.ExpandImagePickFeature
@@ -37,7 +36,7 @@ fun NewEvent(navController: NavController, vm: NewEventVM = viewModel()) {
         }
     }
 
-    CalendarPickerBock(
+    CalendarPickerBlock(
         state = state.value.calendarPicker,
         content = { Content(vm = vm) },
         onClose = { vm.want(NewEventVM.TAG.CALENDAR_PICKER, CalendarPickerFeature.Wish.CloseSheet) }
@@ -50,9 +49,11 @@ private fun Content(vm: NewEventVM) = Root(
         ToolBar(text = "New Event", isCollapsed = vm.state.title.expander.isOpened)
     },
     footer = {
-        ButtonOk(modifier = Modifier.padding(top = 8.dp)) {
-            vm.send(NewEventVM.Event.ClickGotIt)
-        }
+        ButtonOk(
+            modifier = Modifier.padding(top = 8.dp),
+            state = vm.state.buttonOk,
+            onClick = { vm.send(NewEventVM.Event.ClickGotIt) }
+        )
     }
 ) {
     val (titleInput, descriptionInput) = remember { FocusRequester.createRefs() }
@@ -86,20 +87,5 @@ private fun Content(vm: NewEventVM) = Root(
         modifier = Modifier.padding(top = 4.dp),
         state = vm.state.image,
         onClick = { vm.send(NewEventVM.Event.ClickImage) },
-    )
-}
-
-
-@Composable
-private fun ButtonOk(modifier: Modifier = Modifier, lambda: () -> Unit) = Button(
-    modifier = modifier
-        .clip(AppTheme.shapes.medium)
-        .padding(start = 20.dp, end = 20.dp, bottom = 20.dp),
-    onClick = lambda,
-) {
-    Title(
-        text = "Got it!",
-        color = AppTheme.colors.primary,
-        modifier = Modifier.fillMaxWidth()
     )
 }

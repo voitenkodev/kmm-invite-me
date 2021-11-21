@@ -3,8 +3,11 @@ package com.voitenko.dev.kmminviteme.android.newEvent
 import android.net.Uri
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Image
+import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.viewModelScope
 import com.voitenko.dev.kmminviteme.android.FeatureViewModel
+import com.voitenko.dev.kmminviteme.android.common.theme.AppTheme
+import com.voitenko.dev.kmminviteme.android.features.buttonOk.ButtonOkFeature
 import com.voitenko.dev.kmminviteme.android.features.calendarPicker.CalendarPickerFeature
 import com.voitenko.dev.kmminviteme.android.features.expandImagePicker.ExpandImagePickFeature
 import com.voitenko.dev.kmminviteme.android.features.expandTextInput.ExpandInputFeature
@@ -13,7 +16,7 @@ import mvi.core.MviCore
 class NewEventVM : FeatureViewModel<NewEventVM.Event, NewEventVM.NewEventState>() {
 
     enum class TAG : MviCore.FeatureTag {
-        TITLE, DESCRIPTION, DATE, LOCATION, IMAGE, CALENDAR_PICKER
+        TITLE, DESCRIPTION, DATE, LOCATION, IMAGE, CALENDAR_PICKER, BUTTON_OK
     }
 
     override val processor = MviCore.featureProcessor(root = NewEventState())
@@ -41,6 +44,10 @@ class NewEventVM : FeatureViewModel<NewEventVM.Event, NewEventVM.NewEventState>(
             tag = TAG.CALENDAR_PICKER,
             feature = { CalendarPickerFeature(it.calendarPicker) },
             updateRoot = { copy(calendarPicker = it) }
+        ).feature(
+            tag = TAG.BUTTON_OK,
+            feature = { ButtonOkFeature(it.buttonOk) },
+            updateRoot = { copy(buttonOk = it) }
         ).launchIn(viewModelScope)
         .postProcessing<ExpandInputFeature.State>(TAG.TITLE) {
             if (it.input.text.isNotEmpty())
@@ -75,18 +82,28 @@ class NewEventVM : FeatureViewModel<NewEventVM.Event, NewEventVM.NewEventState>(
                 when {
                     state.title.expander.isOpened.not() -> {
                         want(TAG.TITLE, ExpandInputFeature.Wish.Expand)
+                        want(TAG.BUTTON_OK, ButtonOkFeature.Wish.SetTitle("Set Description"))
+                        want(TAG.BUTTON_OK, ButtonOkFeature.Wish.SetBackground(Color.Red))
                     }
                     state.description.expander.isOpened.not() -> {
                         want(TAG.DESCRIPTION, ExpandInputFeature.Wish.Expand)
+                        want(TAG.BUTTON_OK, ButtonOkFeature.Wish.SetTitle("Set Date"))
+                        want(TAG.BUTTON_OK, ButtonOkFeature.Wish.SetBackground(Color.Blue))
                     }
                     state.date.expander.isOpened.not() -> {
                         want(TAG.DATE, ExpandInputFeature.Wish.Expand)
+                        want(TAG.BUTTON_OK, ButtonOkFeature.Wish.SetTitle("Set Location"))
+                        want(TAG.BUTTON_OK, ButtonOkFeature.Wish.SetBackground(Color.Green))
                     }
                     state.location.expander.isOpened.not() -> {
                         want(TAG.LOCATION, ExpandInputFeature.Wish.Expand)
+                        want(TAG.BUTTON_OK, ButtonOkFeature.Wish.SetTitle("Add Image"))
+                        want(TAG.BUTTON_OK, ButtonOkFeature.Wish.SetBackground(Color.Cyan))
                     }
                     state.image.expander.isOpened.not() -> {
                         want(TAG.IMAGE, ExpandImagePickFeature.Wish.Expand)
+                        want(TAG.BUTTON_OK, ButtonOkFeature.Wish.SetTitle("Save Event"))
+                        want(TAG.BUTTON_OK, ButtonOkFeature.Wish.SetBackground(Color.LightGray))
                     }
                     else -> Unit
                 }
@@ -204,6 +221,10 @@ class NewEventVM : FeatureViewModel<NewEventVM.Event, NewEventVM.NewEventState>(
         ),
         val calendarPicker: CalendarPickerFeature.State = CalendarPickerFeature.State(
             isOpen = false
+        ),
+        val buttonOk: ButtonOkFeature.State = ButtonOkFeature.State(
+            text = "Got It",
+            color = Color.Black
         )
     )
 }

@@ -11,7 +11,7 @@ import java.time.LocalDate
 
 
 @Composable
-fun CalendarPickerBock(
+fun CalendarPickerBlock(
     state: CalendarPickerFeature.State,
     content: @Composable () -> Unit,
     onClose: () -> Unit

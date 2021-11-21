@@ -10,11 +10,12 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun Root(
+    modifier: Modifier = Modifier,
     header: (@Composable ColumnScope.() -> Unit)? = null,
     footer: (@Composable ColumnScope.() -> Unit)? = null,
     body: @Composable ColumnScope.() -> Unit
 ) {
-    Column {
+    Column(modifier = modifier) {
         header?.invoke(this)
         Column(
             modifier = Modifier
