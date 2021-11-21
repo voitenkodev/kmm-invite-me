@@ -1,9 +1,9 @@
 package com.voitenko.dev.kmminviteme.android.features.calendarPicker
 
-import com.voitenko.dev.kmminviteme.mvi.feature.Actor
-import com.voitenko.dev.kmminviteme.mvi.feature.Feature
-import com.voitenko.dev.kmminviteme.mvi.feature.Reducer
 import kotlinx.coroutines.flow.flowOf
+import mvi.feature.Actor
+import mvi.feature.Feature
+import mvi.feature.Reducer
 
 class CalendarPickerFeature constructor(
     initial: State = State()
@@ -18,7 +18,9 @@ class CalendarPickerFeature constructor(
         object CloseSheet : Wish()
     }
 
-    data class State(val isOpen: Boolean = false) : Feature.State
+    data class State(
+        val isOpen: Boolean = false
+    ) : Feature.State
 
     class ActorImpl : Actor<Wish, State> {
         override fun invoke(wish: Wish, state: State) = when (wish) {

@@ -4,11 +4,11 @@ import android.net.Uri
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Image
 import androidx.compose.ui.graphics.vector.ImageVector
-import com.voitenko.dev.kmminviteme.mvi.feature.Actor
-import com.voitenko.dev.kmminviteme.mvi.feature.Feature
-import com.voitenko.dev.kmminviteme.mvi.feature.NewsPublisher
-import com.voitenko.dev.kmminviteme.mvi.feature.Reducer
 import kotlinx.coroutines.flow.flowOf
+import mvi.feature.Actor
+import mvi.feature.Feature
+import mvi.feature.NewsPublisher
+import mvi.feature.Reducer
 
 class ExpandImagePickFeature(
     initial: State = State()
@@ -73,8 +73,7 @@ class ExpandImagePickFeature(
         }
     }
 
-    class NewsPublisherImpl :
-        NewsPublisher<Wish, State, News> {
+    class NewsPublisherImpl : NewsPublisher<Wish, State, News> {
         override fun invoke(effect: Wish, state: State) = when (effect) {
             Wish.Pick -> News.Pick
             else -> null

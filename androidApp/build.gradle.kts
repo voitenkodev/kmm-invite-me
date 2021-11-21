@@ -7,6 +7,8 @@ plugins {
 dependencies {
     implementation(project(":shared"))
 
+    implementation("io.github.voitenkodev:mvi-core:1.0.1")
+
     implementation(libs.kotlinx.kotlin)
     implementation(libs.kotlinx.coroutines)
     implementation(libs.kotlinx.datetime)

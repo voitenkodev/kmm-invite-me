@@ -8,13 +8,56 @@ import com.voitenko.dev.kmminviteme.android.FeatureViewModel
 import com.voitenko.dev.kmminviteme.android.features.calendarPicker.CalendarPickerFeature
 import com.voitenko.dev.kmminviteme.android.features.expandImagePicker.ExpandImagePickFeature
 import com.voitenko.dev.kmminviteme.android.features.expandTextInput.ExpandInputFeature
-import com.voitenko.dev.kmminviteme.mvi.builder.FeatureTag
-import com.voitenko.dev.kmminviteme.mvi.builder.MviProcessor
-import com.voitenko.dev.kmminviteme.mvi.push
+import mvi.core.MviCore
 
 class NewEventVM : FeatureViewModel<NewEventVM.Event, NewEventVM.NewEventState>() {
 
-    enum class TAG : FeatureTag { TITLE, DESCRIPTION, DATE, LOCATION, IMAGE, CALENDAR_PICKER }
+    enum class TAG : MviCore.FeatureTag {
+        TITLE, DESCRIPTION, DATE, LOCATION, IMAGE, CALENDAR_PICKER
+    }
+
+    override val processor = MviCore.featureProcessor(root = NewEventState())
+        .feature(
+            tag = TAG.TITLE,
+            feature = { ExpandInputFeature(it.title) },
+            updateRoot = { copy(title = it) }
+        ).feature(
+            tag = TAG.DESCRIPTION,
+            feature = { ExpandInputFeature(it.description) },
+            updateRoot = { copy(description = it) }
+        ).feature(
+            tag = TAG.DATE,
+            feature = { ExpandInputFeature(it.date) },
+            updateRoot = { copy(date = it) }
+        ).feature(
+            tag = TAG.LOCATION,
+            feature = { ExpandInputFeature(it.location) },
+            updateRoot = { copy(location = it) }
+        ).feature(
+            tag = TAG.IMAGE,
+            feature = { ExpandImagePickFeature(it.image) },
+            updateRoot = { copy(image = it) }
+        ).feature(
+            tag = TAG.CALENDAR_PICKER,
+            feature = { CalendarPickerFeature(it.calendarPicker) },
+            updateRoot = { copy(calendarPicker = it) }
+        ).launchIn(viewModelScope)
+        .postProcessing<ExpandInputFeature.State>(TAG.TITLE) {
+            if (it.input.text.isNotEmpty())
+                want(TAG.TITLE, ExpandInputFeature.Wish.HideError)
+        }.postProcessing<ExpandInputFeature.State>(TAG.DESCRIPTION) {
+            if (it.input.text.isNotEmpty())
+                want(TAG.DESCRIPTION, ExpandInputFeature.Wish.HideError)
+        }.postProcessing<ExpandInputFeature.State>(TAG.DATE) {
+            if (it.input.text.isNotEmpty())
+                want(TAG.DATE, ExpandInputFeature.Wish.HideError)
+        }.postProcessing<ExpandInputFeature.State>(TAG.LOCATION) {
+            if (it.input.text.isNotEmpty())
+                want(TAG.LOCATION, ExpandInputFeature.Wish.HideError)
+        }.postProcessing<ExpandImagePickFeature.State>(TAG.IMAGE) {
+            if (it.image.image != Uri.EMPTY)
+                want(TAG.IMAGE, ExpandImagePickFeature.Wish.HideError)
+        }
 
     sealed class Event : FeatureViewModel.Event {
         object ClickGotIt : Event()
@@ -69,37 +112,6 @@ class NewEventVM : FeatureViewModel<NewEventVM.Event, NewEventVM.NewEventState>(
             else -> Unit
         }
     }
-
-    override val processor = MviProcessor.FeatureProcessor(root = NewEventState())
-        .feature(TAG.TITLE) {
-            ExpandInputFeature(it.title) push { copy(title = it) }
-        }.feature(TAG.DESCRIPTION) {
-            ExpandInputFeature(it.description) push { copy(description = it) }
-        }.feature(TAG.DATE) {
-            ExpandInputFeature(it.date) push { copy(date = it) }
-        }.feature(TAG.LOCATION) {
-            ExpandInputFeature(it.location) push { copy(location = it) }
-        }.feature(TAG.IMAGE) {
-            ExpandImagePickFeature(it.image) push { copy(image = it) }
-        }.feature(TAG.CALENDAR_PICKER) {
-            CalendarPickerFeature(it.calendarPicker) push { copy(calendarPicker = it) }
-        }.launchIn(viewModelScope)
-        .automatically<ExpandInputFeature.State>(TAG.TITLE) {
-            if (it.input.text.isNotEmpty())
-                want(TAG.TITLE, ExpandInputFeature.Wish.HideError)
-        }.automatically<ExpandInputFeature.State>(TAG.DESCRIPTION) {
-            if (it.input.text.isNotEmpty())
-                want(TAG.DESCRIPTION, ExpandInputFeature.Wish.HideError)
-        }.automatically<ExpandInputFeature.State>(TAG.DATE) {
-            if (it.input.text.isNotEmpty())
-                want(TAG.DATE, ExpandInputFeature.Wish.HideError)
-        }.automatically<ExpandInputFeature.State>(TAG.LOCATION) {
-            if (it.input.text.isNotEmpty())
-                want(TAG.LOCATION, ExpandInputFeature.Wish.HideError)
-        }.automatically<ExpandImagePickFeature.State>(TAG.IMAGE) {
-            if (it.image.image != Uri.EMPTY)
-                want(TAG.IMAGE, ExpandImagePickFeature.Wish.HideError)
-        }
 
     data class NewEventState(
         val title: ExpandInputFeature.State = ExpandInputFeature.State(

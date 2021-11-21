@@ -1,9 +1,9 @@
 package com.voitenko.dev.kmminviteme.android.features.expandTextInput
 
-import com.voitenko.dev.kmminviteme.mvi.feature.Actor
-import com.voitenko.dev.kmminviteme.mvi.feature.Feature
-import com.voitenko.dev.kmminviteme.mvi.feature.Reducer
 import kotlinx.coroutines.flow.flowOf
+import mvi.feature.Actor
+import mvi.feature.Feature
+import mvi.feature.Reducer
 
 class ExpandInputFeature(
     initial: State = State()
