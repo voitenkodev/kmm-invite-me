@@ -20,6 +20,8 @@ data class Expander(
     val color2: Color,
     val alpha1: Float,
     val alpha2: Float,
+    val radius1: Int?,
+    val radius2: Int?,
     val state: Boolean
 )
 
@@ -31,6 +33,8 @@ fun ExpanderContent(
     height2: Dp? = null,
     width1: Dp? = null,
     width2: Dp? = null,
+    radius1: Int? = null,
+    radius2: Int? = null,
     state: Boolean,
     content: @Composable (Expander) -> Unit,
 ) = BoxWithConstraints(modifier = Modifier.wrapContentSize()) {
@@ -72,6 +76,8 @@ fun ExpanderContent(
         color2 = _color2,
         alpha1 = _alpha1,
         alpha2 = _alpha2,
+        radius1 = radius1,
+        radius2 = radius2,
         state = state,
     )
     content.invoke(box)

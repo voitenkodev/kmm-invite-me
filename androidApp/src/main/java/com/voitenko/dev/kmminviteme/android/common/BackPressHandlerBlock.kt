@@ -1,4 +1,4 @@
-package com.voitenko.dev.kmminviteme.android.asd.backpress
+package com.voitenko.dev.kmminviteme.android.common
 
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner

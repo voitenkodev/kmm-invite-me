@@ -28,12 +28,12 @@ class ExpandInputFeature(
     ) : Feature.State {
 
         data class Error(
-            val text: String = "ops, u forgot to put title",
+            val text: String = "",
             val isShowed: Boolean = false
         )
 
         data class Input(
-            val placeholder: String = "Title...",
+            val placeholder: String = "",
             val text: String = "",
             val isFocused: Boolean = false,
             val readOnly: Boolean = false
@@ -41,8 +41,8 @@ class ExpandInputFeature(
 
         data class Expander(
             val isOpened: Boolean = false,
-            val number: String = "1",
-            val notes: String = "You need to put title of event",
+            val number: String = "",
+            val notes: String = "",
             val expandHeight: Int? = null,
         )
     }

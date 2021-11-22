@@ -1,6 +1,5 @@
 package com.voitenko.dev.kmminviteme.android.newEvent
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -13,15 +12,13 @@ import androidx.navigation.NavController
 import com.voitenko.dev.kmminviteme.android.JustOnce
 import com.voitenko.dev.kmminviteme.android.common.base.ToolBar
 import com.voitenko.dev.kmminviteme.android.common.base.box.Root
-import com.voitenko.dev.kmminviteme.android.common.base.box.ShimmerBox
-import com.voitenko.dev.kmminviteme.android.common.theme.AppTheme
 import com.voitenko.dev.kmminviteme.android.contentLaunch
-import com.voitenko.dev.kmminviteme.android.features.buttonOk.ButtonOk
 import com.voitenko.dev.kmminviteme.android.features.calendarPicker.CalendarPickerBlock
 import com.voitenko.dev.kmminviteme.android.features.calendarPicker.CalendarPickerFeature
 import com.voitenko.dev.kmminviteme.android.features.expandImagePicker.ExpandImagePickBlock
 import com.voitenko.dev.kmminviteme.android.features.expandImagePicker.ExpandImagePickFeature
 import com.voitenko.dev.kmminviteme.android.features.expandTextInput.ExpandInputBlock
+import com.voitenko.dev.kmminviteme.android.features.requestButton.RequestButton
 
 @Composable
 fun NewEvent(navController: NavController, vm: NewEventVM = viewModel()) {
@@ -49,9 +46,8 @@ private fun Content(vm: NewEventVM) = Root(
         ToolBar(text = "New Event", isCollapsed = vm.state.title.expander.isOpened)
     },
     footer = {
-        ButtonOk(
-            modifier = Modifier.padding(top = 8.dp),
-            state = vm.state.buttonOk,
+        RequestButton(
+            state = vm.state.requestButton,
             onClick = { vm.send(NewEventVM.Event.ClickGotIt) }
         )
     }

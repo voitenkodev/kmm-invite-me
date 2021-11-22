@@ -13,7 +13,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.voitenko.dev.kmminviteme.android.asd.backpress.BackHandler
 
 @Composable
 fun BottomSheetBlock(
