@@ -22,8 +22,8 @@ fun RequestButton(
     state: RequestButtonFeature.State,
     onClick: () -> Unit
 ) = ExpanderButtonBlock(
-    color1 = state.request.color,
-    color2 = RequestButtonFeature.State.Request.PROGRESS.color,
+    color1 = state.color,
+    color2 = state.color,
     text = state.text,
     state = state.isOpened,
     onClick = onClick

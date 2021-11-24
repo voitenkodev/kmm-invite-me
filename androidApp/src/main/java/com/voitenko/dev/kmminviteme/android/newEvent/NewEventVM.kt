@@ -3,6 +3,7 @@ package com.voitenko.dev.kmminviteme.android.newEvent
 import android.net.Uri
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Image
+import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.viewModelScope
 import com.voitenko.dev.kmminviteme.android.FeatureViewModel
 import com.voitenko.dev.kmminviteme.android.features.calendarPicker.CalendarPickerFeature
@@ -14,7 +15,7 @@ import mvi.core.MviCore
 class NewEventVM : FeatureViewModel<NewEventVM.Event, NewEventVM.NewEventState>() {
 
     enum class TAG : MviCore.FeatureTag {
-        TITLE, DESCRIPTION, DATE, LOCATION, IMAGE, CALENDAR_PICKER, BUTTON_REQUEST
+        TITLE, DESCRIPTION, DATE, LOCATION, IMAGE, CALENDAR_PICKER, REQUEST_BUTTON
     }
 
     override val processor = MviCore.featureProcessor(root = NewEventState())
@@ -43,7 +44,7 @@ class NewEventVM : FeatureViewModel<NewEventVM.Event, NewEventVM.NewEventState>(
             feature = { CalendarPickerFeature(it.calendarPicker) },
             updateRoot = { copy(calendarPicker = it) }
         ).feature(
-            tag = TAG.BUTTON_REQUEST,
+            tag = TAG.REQUEST_BUTTON,
             feature = { RequestButtonFeature(it.requestButton) },
             updateRoot = { copy(requestButton = it) }
         ).launchIn(viewModelScope)
@@ -62,6 +63,21 @@ class NewEventVM : FeatureViewModel<NewEventVM.Event, NewEventVM.NewEventState>(
         }.postProcessing<ExpandImagePickFeature.State>(TAG.IMAGE) {
             if (it.image.image != Uri.EMPTY)
                 want(TAG.IMAGE, ExpandImagePickFeature.Wish.HideError)
+        }.postProcessing<RequestButtonFeature.State>(TAG.REQUEST_BUTTON) {
+            if (it.request == RequestButtonFeature.State.Request.SUCCESS) {
+                want(TAG.REQUEST_BUTTON, RequestButtonFeature.Wish.Expand)
+                want(TAG.REQUEST_BUTTON, RequestButtonFeature.Wish.SetTitle("Success"))
+                want(TAG.REQUEST_BUTTON, RequestButtonFeature.Wish.SetColor(Color.Green))
+            }
+            if (it.request == RequestButtonFeature.State.Request.PROGRESS) {
+                want(TAG.REQUEST_BUTTON, RequestButtonFeature.Wish.Collapse)
+                want(TAG.REQUEST_BUTTON, RequestButtonFeature.Wish.SetColor(Color.Yellow))
+            }
+            if (it.request == RequestButtonFeature.State.Request.ERROR) {
+                want(TAG.REQUEST_BUTTON, RequestButtonFeature.Wish.Expand)
+                want(TAG.REQUEST_BUTTON, RequestButtonFeature.Wish.SetColor(Color.Red))
+                want(TAG.REQUEST_BUTTON, RequestButtonFeature.Wish.SetTitle("Error"))
+            }
         }
 
     sealed class Event : FeatureViewModel.Event {
@@ -80,29 +96,26 @@ class NewEventVM : FeatureViewModel<NewEventVM.Event, NewEventVM.NewEventState>(
                 when {
                     state.title.expander.isOpened.not() -> {
                         want(TAG.TITLE, ExpandInputFeature.Wish.Expand)
-                        want(
-                            TAG.BUTTON_REQUEST,
-                            RequestButtonFeature.Wish.SetTitle("Set Description")
-                        )
+                        want(TAG.REQUEST_BUTTON, RequestButtonFeature.Wish.SetTitle("Description"))
                     }
                     state.description.expander.isOpened.not() -> {
                         want(TAG.DESCRIPTION, ExpandInputFeature.Wish.Expand)
-                        want(TAG.BUTTON_REQUEST, RequestButtonFeature.Wish.SetTitle("Set Date"))
+                        want(TAG.REQUEST_BUTTON, RequestButtonFeature.Wish.SetTitle("Set Date"))
                     }
                     state.date.expander.isOpened.not() -> {
                         want(TAG.DATE, ExpandInputFeature.Wish.Expand)
-                        want(TAG.BUTTON_REQUEST, RequestButtonFeature.Wish.SetTitle("Set Location"))
+                        want(TAG.REQUEST_BUTTON, RequestButtonFeature.Wish.SetTitle("Set Location"))
                     }
                     state.location.expander.isOpened.not() -> {
                         want(TAG.LOCATION, ExpandInputFeature.Wish.Expand)
-                        want(TAG.BUTTON_REQUEST, RequestButtonFeature.Wish.SetTitle("Add Image"))
+                        want(TAG.REQUEST_BUTTON, RequestButtonFeature.Wish.SetTitle("Add Image"))
                     }
                     state.image.expander.isOpened.not() -> {
                         want(TAG.IMAGE, ExpandImagePickFeature.Wish.Expand)
-                        want(TAG.BUTTON_REQUEST, RequestButtonFeature.Wish.SetTitle("Save Event"))
+                        want(TAG.REQUEST_BUTTON, RequestButtonFeature.Wish.SetTitle("Save Event"))
                     }
                     else -> {
-                        want(TAG.BUTTON_REQUEST, RequestButtonFeature.Wish.CallRequest)
+                        want(TAG.REQUEST_BUTTON, RequestButtonFeature.Wish.CallRequest)
                         if (state.title.input.text.isEmpty()) {
                             want(TAG.TITLE, ExpandInputFeature.Wish.ShowError)
                         }
@@ -237,6 +250,7 @@ class NewEventVM : FeatureViewModel<NewEventVM.Event, NewEventVM.NewEventState>(
         ),
         val requestButton: RequestButtonFeature.State = RequestButtonFeature.State(
             text = "Got It",
+            color = Color.Black,
             isOpened = true
         )
     )
