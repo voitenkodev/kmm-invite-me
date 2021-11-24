@@ -3,13 +3,12 @@ package com.voitenko.dev.kmminviteme.android.newEvent
 import android.net.Uri
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Image
-import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.viewModelScope
 import com.voitenko.dev.kmminviteme.android.FeatureViewModel
-import com.voitenko.dev.kmminviteme.android.features.requestButton.RequestButtonFeature
 import com.voitenko.dev.kmminviteme.android.features.calendarPicker.CalendarPickerFeature
 import com.voitenko.dev.kmminviteme.android.features.expandImagePicker.ExpandImagePickFeature
 import com.voitenko.dev.kmminviteme.android.features.expandTextInput.ExpandInputFeature
+import com.voitenko.dev.kmminviteme.android.features.requestButton.RequestButtonFeature
 import mvi.core.MviCore
 
 class NewEventVM : FeatureViewModel<NewEventVM.Event, NewEventVM.NewEventState>() {
@@ -103,7 +102,7 @@ class NewEventVM : FeatureViewModel<NewEventVM.Event, NewEventVM.NewEventState>(
                         want(TAG.BUTTON_REQUEST, RequestButtonFeature.Wish.SetTitle("Save Event"))
                     }
                     else -> {
-                        want(TAG.BUTTON_REQUEST, RequestButtonFeature.Wish.Collapse)
+                        want(TAG.BUTTON_REQUEST, RequestButtonFeature.Wish.CallRequest)
                         if (state.title.input.text.isEmpty()) {
                             want(TAG.TITLE, ExpandInputFeature.Wish.ShowError)
                         }

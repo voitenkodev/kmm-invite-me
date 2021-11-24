@@ -4,17 +4,15 @@ import android.net.Uri
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Image
 import androidx.compose.ui.graphics.vector.ImageVector
-import kotlinx.coroutines.flow.flowOf
-import mvi.feature.Actor
 import mvi.feature.Feature
+import mvi.feature.Feature1
 import mvi.feature.NewsPublisher
 import mvi.feature.Reducer
 
 class ExpandImagePickFeature(
     initial: State = State()
-) : Feature<ExpandImagePickFeature.Wish, ExpandImagePickFeature.State, ExpandImagePickFeature.News>(
+) : Feature1<ExpandImagePickFeature.Wish, ExpandImagePickFeature.State, ExpandImagePickFeature.News>(
     initial = initial,
-    actor = ActorImpl(),
     reducer = ReducerImpl(),
     newsPublisher = NewsPublisherImpl()
 ) {
@@ -54,12 +52,6 @@ class ExpandImagePickFeature(
             val notes: String = "You need to put title of event",
             val expandHeight: Int? = null,
         )
-    }
-
-    class ActorImpl : Actor<Wish, State> {
-        override fun invoke(wish: Wish, state: State) = when (wish) {
-            else -> flowOf(wish)
-        }
     }
 
     class ReducerImpl : Reducer<Wish, State> {

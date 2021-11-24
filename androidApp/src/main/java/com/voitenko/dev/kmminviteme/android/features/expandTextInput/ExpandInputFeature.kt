@@ -1,15 +1,13 @@
 package com.voitenko.dev.kmminviteme.android.features.expandTextInput
 
-import kotlinx.coroutines.flow.flowOf
-import mvi.feature.Actor
 import mvi.feature.Feature
+import mvi.feature.Feature1
 import mvi.feature.Reducer
 
 class ExpandInputFeature(
     initial: State = State()
-) : Feature<ExpandInputFeature.Wish, ExpandInputFeature.State, Nothing>(
+) : Feature1<ExpandInputFeature.Wish, ExpandInputFeature.State, Nothing>(
     initial = initial,
-    actor = ActorImpl(),
     reducer = ReducerImpl(),
 ) {
 
@@ -45,12 +43,6 @@ class ExpandInputFeature(
             val notes: String = "",
             val expandHeight: Int? = null,
         )
-    }
-
-    class ActorImpl : Actor<Wish, State> {
-        override fun invoke(wish: Wish, state: State) = when (wish) {
-            else -> flowOf(wish)
-        }
     }
 
     class ReducerImpl : Reducer<Wish, State> {

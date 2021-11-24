@@ -1,25 +1,33 @@
 package com.voitenko.dev.kmminviteme.android.features.requestButton
 
 import androidx.compose.ui.graphics.Color
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import mvi.feature.Actor
 import mvi.feature.Feature
+import mvi.feature.Feature2
 import mvi.feature.Reducer
 
 class RequestButtonFeature(
     initial: State = State()
-) : Feature<RequestButtonFeature.Wish, RequestButtonFeature.State, Nothing>(
+) : Feature2<RequestButtonFeature.Wish, RequestButtonFeature.Effect, RequestButtonFeature.State, Nothing>(
     initial = initial,
     actor = ActorImpl(),
     reducer = ReducerImpl(),
 ) {
 
     sealed class Wish : Feature.Wish {
-        object Expand : Wish()
-        object Collapse : Wish()
         data class SetTitle(val text: String) : Wish()
-        data class CallRequest(val request: State.Request) : Wish()
+        object CallRequest : Wish()
+    }
+
+    sealed class Effect : Feature.Effect {
+        data class SetTitle(val text: String) : Effect()
+
+        object ProgressRequest : Effect()
+        object SuccessRequest : Effect()
+        object ErrorRequest : Effect()
     }
 
     data class State(
@@ -32,25 +40,23 @@ class RequestButtonFeature(
         }
     }
 
-    class ActorImpl : Actor<Wish, State> {
+    class ActorImpl : Actor<Wish, State, Effect> {
         override fun invoke(wish: Wish, state: State) = when (wish) {
             is Wish.CallRequest -> flow {
-                emit(Wish.CallRequest(State.Request.PROGRESS))
-                emit(Wish.Collapse)
-//                kotlinx.coroutines.delay(500)
-//                emit(Wish.CallRequest(State.Request.SUCCESS))
-                emit(Wish.Expand)
+                emit(Effect.ProgressRequest)
+                delay(1000)
+                emit(Effect.SuccessRequest)
             }
-            else -> flowOf(wish)
+            is Wish.SetTitle -> flowOf(Effect.SetTitle(wish.text))
         }
     }
 
-    class ReducerImpl : Reducer<Wish, State> {
-        override fun invoke(wish: Wish, state: State) = when (wish) {
-            is Wish.SetTitle -> state.copy(text = wish.text)
-            Wish.Expand -> state.copy(isOpened = true)
-            Wish.Collapse -> state.copy(isOpened = false)
-            is Wish.CallRequest -> state.copy(request = wish.request)
+    class ReducerImpl : Reducer<Effect, State> {
+        override fun invoke(effect: Effect, state: State) = when (effect) {
+            is Effect.SetTitle -> state.copy(text = effect.text)
+            Effect.ErrorRequest -> state.copy(request = State.Request.ERROR, isOpened = true)
+            Effect.SuccessRequest -> state.copy(request = State.Request.SUCCESS, isOpened = true)
+            Effect.ProgressRequest -> state.copy(request = State.Request.SUCCESS, isOpened = false)
         }
     }
 }

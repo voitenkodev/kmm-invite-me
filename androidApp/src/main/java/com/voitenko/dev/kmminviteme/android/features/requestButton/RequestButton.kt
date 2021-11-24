@@ -59,22 +59,21 @@ private fun ExpandBody(
         .padding(start = 20.dp, end = 20.dp, bottom = 20.dp)
         .size(width = expander.width, height = expander.height),
     onClick = onClick,
-    shape = RoundedCornerShape(
-        if (expander.state) expander.radius1 ?: 0 else expander.radius2 ?: 0
-    ),
+    shape = RoundedCornerShape(expander.radius ?: 0),
     colors = ButtonDefaults.buttonColors(
         backgroundColor = expander.color1
-    )
-) {
-    if (expander.state) Title(
-        modifier = Modifier
-            .alpha(expander.alpha1)
-            .fillMaxWidth(),
-        text = text,
-        color = AppTheme.colors.primary
-    ) else CircularProgressIndicator(
-        modifier = Modifier
-            .size(23.dp, 23.dp)
-            .alpha(expander.alpha2)
-    )
-}
+    ),
+    content = {
+        if (expander.state) Title(
+            modifier = Modifier
+                .alpha(expander.alpha1)
+                .fillMaxWidth(),
+            text = text,
+            color = AppTheme.colors.primary
+        ) else CircularProgressIndicator(
+            modifier = Modifier
+                .size(23.dp, 23.dp)
+                .alpha(expander.alpha2)
+        )
+    }
+)

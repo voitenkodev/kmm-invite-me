@@ -1,10 +1,7 @@
 package com.voitenko.dev.kmminviteme.android.common.base.box
 
 import androidx.compose.animation.animateColor
-import androidx.compose.animation.core.animateDp
-import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.core.updateTransition
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.runtime.Composable
@@ -20,8 +17,7 @@ data class Expander(
     val color2: Color,
     val alpha1: Float,
     val alpha2: Float,
-    val radius1: Int?,
-    val radius2: Int?,
+    val radius: Int?,
     val state: Boolean
 )
 
@@ -65,6 +61,13 @@ fun ExpanderContent(
         transitionSpec = { tween(durationMillis = dur1) }, label = ""
     ) { state -> if (state) 1f else 0f }
 
+    val _radius by transition.animateInt(
+        transitionSpec = { tween(durationMillis = dur2, easing = FastOutLinearInEasing) },
+        label = ""
+    ) { state ->
+        if (state) radius1 ?: 0 else radius2 ?: 0
+    }
+
     val _alpha2 by transition.animateFloat(
         transitionSpec = { tween(durationMillis = dur1) }, label = ""
     ) { state -> if (state) 0f else 1f }
@@ -76,8 +79,7 @@ fun ExpanderContent(
         color2 = _color2,
         alpha1 = _alpha1,
         alpha2 = _alpha2,
-        radius1 = radius1,
-        radius2 = radius2,
+        radius = _radius,
         state = state,
     )
     content.invoke(box)
