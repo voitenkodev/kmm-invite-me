@@ -1,5 +1,5 @@
 [versions]
-android-gradle-vers = "7.1.0-beta02"
+android-gradle-vers = "7.1.0-beta04"
 kotlin-vers = "1.5.31"
 coroutines-vers = "1.5.2"
 datetime-vers = "0.3.0"

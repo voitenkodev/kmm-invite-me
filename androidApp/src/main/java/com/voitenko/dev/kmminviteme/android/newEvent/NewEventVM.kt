@@ -48,37 +48,6 @@ class NewEventVM : FeatureViewModel<NewEventVM.Event, NewEventVM.NewEventState>(
             feature = { RequestButtonFeature(it.requestButton) },
             updateRoot = { copy(requestButton = it) }
         ).launchIn(viewModelScope)
-        .postProcessing<ExpandInputFeature.State>(TAG.TITLE) {
-            if (it.input.text.isNotEmpty())
-                want(TAG.TITLE, ExpandInputFeature.Wish.HideError)
-        }.postProcessing<ExpandInputFeature.State>(TAG.DESCRIPTION) {
-            if (it.input.text.isNotEmpty())
-                want(TAG.DESCRIPTION, ExpandInputFeature.Wish.HideError)
-        }.postProcessing<ExpandInputFeature.State>(TAG.DATE) {
-            if (it.input.text.isNotEmpty())
-                want(TAG.DATE, ExpandInputFeature.Wish.HideError)
-        }.postProcessing<ExpandInputFeature.State>(TAG.LOCATION) {
-            if (it.input.text.isNotEmpty())
-                want(TAG.LOCATION, ExpandInputFeature.Wish.HideError)
-        }.postProcessing<ExpandImagePickFeature.State>(TAG.IMAGE) {
-            if (it.image.image != Uri.EMPTY)
-                want(TAG.IMAGE, ExpandImagePickFeature.Wish.HideError)
-        }.postProcessing<RequestButtonFeature.State>(TAG.REQUEST_BUTTON) {
-            if (it.request == RequestButtonFeature.State.Request.SUCCESS) {
-                want(TAG.REQUEST_BUTTON, RequestButtonFeature.Wish.Expand)
-                want(TAG.REQUEST_BUTTON, RequestButtonFeature.Wish.SetTitle("Success"))
-                want(TAG.REQUEST_BUTTON, RequestButtonFeature.Wish.SetColor(Color.Green))
-            }
-            if (it.request == RequestButtonFeature.State.Request.PROGRESS) {
-                want(TAG.REQUEST_BUTTON, RequestButtonFeature.Wish.Collapse)
-                want(TAG.REQUEST_BUTTON, RequestButtonFeature.Wish.SetColor(Color.Yellow))
-            }
-            if (it.request == RequestButtonFeature.State.Request.ERROR) {
-                want(TAG.REQUEST_BUTTON, RequestButtonFeature.Wish.Expand)
-                want(TAG.REQUEST_BUTTON, RequestButtonFeature.Wish.SetColor(Color.Red))
-                want(TAG.REQUEST_BUTTON, RequestButtonFeature.Wish.SetTitle("Error"))
-            }
-        }
 
     sealed class Event : FeatureViewModel.Event {
         object ClickGotIt : Event()
@@ -88,69 +57,92 @@ class NewEventVM : FeatureViewModel<NewEventVM.Event, NewEventVM.NewEventState>(
         object ClickLocation : Event()
         object ClickImage : Event()
         data class PutImage(val image: Uri) : Event()
+        object CloseInfo : Event()
     }
 
     override fun send(event: FeatureViewModel.Event) {
         when (event) {
+            is Event.WriteTitle -> {
+                processor.want(TAG.TITLE, ExpandInputFeature.Sync.SetText(event.t))
+            }
+            is Event.WriteDescription -> {
+                processor.want(TAG.DESCRIPTION, ExpandInputFeature.Sync.SetText(event.t))
+            }
+            is Event.ClickDate -> {
+                processor.want(TAG.CALENDAR_PICKER, CalendarPickerFeature.Sync.OpenSheet)
+            }
+            is Event.ClickLocation -> {
+                processor.want(TAG.CALENDAR_PICKER, CalendarPickerFeature.Sync.OpenSheet)
+            }
+            is Event.ClickImage -> {
+                processor.want(TAG.IMAGE, ExpandImagePickFeature.Side.Pick)
+            }
+            is Event.PutImage -> {
+                processor.want(TAG.IMAGE, ExpandImagePickFeature.Sync.SetImage(event.image))
+            }
+            is Event.CloseInfo -> {
+                processor.want(TAG.TITLE, ExpandInputFeature.Sync.Reboot)
+                processor.want(TAG.DESCRIPTION, ExpandInputFeature.Sync.Reboot)
+                processor.want(TAG.DATE, ExpandInputFeature.Sync.Reboot)
+                processor.want(TAG.LOCATION, ExpandInputFeature.Sync.Reboot)
+                processor.want(TAG.IMAGE, ExpandImagePickFeature.Sync.Reboot)
+            }
             is Event.ClickGotIt -> {
                 when {
                     state.title.expander.isOpened.not() -> {
-                        want(TAG.TITLE, ExpandInputFeature.Wish.Expand)
-                        want(TAG.REQUEST_BUTTON, RequestButtonFeature.Wish.SetTitle("Description"))
+                        processor.want(TAG.TITLE, ExpandInputFeature.Sync.Expand)
+                        processor.want(
+                            TAG.REQUEST_BUTTON,
+                            RequestButtonFeature.Sync.SetTitle("Description")
+                        )
                     }
                     state.description.expander.isOpened.not() -> {
-                        want(TAG.DESCRIPTION, ExpandInputFeature.Wish.Expand)
-                        want(TAG.REQUEST_BUTTON, RequestButtonFeature.Wish.SetTitle("Set Date"))
+                        processor.want(TAG.DESCRIPTION, ExpandInputFeature.Sync.Expand)
+                        processor.want(
+                            TAG.REQUEST_BUTTON,
+                            RequestButtonFeature.Sync.SetTitle("Set Date")
+                        )
                     }
                     state.date.expander.isOpened.not() -> {
-                        want(TAG.DATE, ExpandInputFeature.Wish.Expand)
-                        want(TAG.REQUEST_BUTTON, RequestButtonFeature.Wish.SetTitle("Set Location"))
+                        processor.want(TAG.DATE, ExpandInputFeature.Sync.Expand)
+                        processor.want(
+                            TAG.REQUEST_BUTTON,
+                            RequestButtonFeature.Sync.SetTitle("Set Location")
+                        )
                     }
                     state.location.expander.isOpened.not() -> {
-                        want(TAG.LOCATION, ExpandInputFeature.Wish.Expand)
-                        want(TAG.REQUEST_BUTTON, RequestButtonFeature.Wish.SetTitle("Add Image"))
+                        processor.want(TAG.LOCATION, ExpandInputFeature.Sync.Expand)
+                        processor.want(
+                            TAG.REQUEST_BUTTON,
+                            RequestButtonFeature.Sync.SetTitle("Add Image")
+                        )
                     }
                     state.image.expander.isOpened.not() -> {
-                        want(TAG.IMAGE, ExpandImagePickFeature.Wish.Expand)
-                        want(TAG.REQUEST_BUTTON, RequestButtonFeature.Wish.SetTitle("Save Event"))
+                        processor.want(TAG.IMAGE, ExpandImagePickFeature.Sync.Expand)
+                        processor.want(
+                            TAG.REQUEST_BUTTON,
+                            RequestButtonFeature.Sync.SetTitle("Save Event")
+                        )
                     }
                     else -> {
-                        want(TAG.REQUEST_BUTTON, RequestButtonFeature.Wish.CallRequest)
+                        processor.want(TAG.REQUEST_BUTTON, RequestButtonFeature.Async.CallRequest)
                         if (state.title.input.text.isEmpty()) {
-                            want(TAG.TITLE, ExpandInputFeature.Wish.ShowError)
+                            processor.want(TAG.TITLE, ExpandInputFeature.Sync.ShowError)
                         }
                         if (state.description.input.text.isEmpty()) {
-                            want(TAG.DESCRIPTION, ExpandInputFeature.Wish.ShowError)
+                            processor.want(TAG.DESCRIPTION, ExpandInputFeature.Sync.ShowError)
                         }
                         if (state.date.input.text.isEmpty()) {
-                            want(TAG.DATE, ExpandInputFeature.Wish.ShowError)
+                            processor.want(TAG.DATE, ExpandInputFeature.Sync.ShowError)
                         }
                         if (state.location.input.text.isEmpty()) {
-                            want(TAG.LOCATION, ExpandInputFeature.Wish.ShowError)
+                            processor.want(TAG.LOCATION, ExpandInputFeature.Sync.ShowError)
                         }
                         if (state.image.image.image == Uri.EMPTY) {
-                            want(TAG.IMAGE, ExpandImagePickFeature.Wish.ShowError)
+                            processor.want(TAG.IMAGE, ExpandImagePickFeature.Sync.ShowError)
                         }
                     }
                 }
-            }
-            is Event.WriteTitle -> {
-                want(TAG.TITLE, ExpandInputFeature.Wish.SetText(event.t))
-            }
-            is Event.WriteDescription -> {
-                want(TAG.DESCRIPTION, ExpandInputFeature.Wish.SetText(event.t))
-            }
-            is Event.ClickDate -> {
-                want(TAG.CALENDAR_PICKER, CalendarPickerFeature.Wish.OpenSheet)
-            }
-            is Event.ClickLocation -> {
-                want(TAG.CALENDAR_PICKER, CalendarPickerFeature.Wish.OpenSheet)
-            }
-            is Event.ClickImage -> {
-                want(TAG.IMAGE, ExpandImagePickFeature.Wish.Pick)
-            }
-            is Event.PutImage -> {
-                want(TAG.IMAGE, ExpandImagePickFeature.Wish.SetImage(event.image))
             }
             else -> Unit
         }
@@ -190,7 +182,7 @@ class NewEventVM : FeatureViewModel<NewEventVM.Event, NewEventVM.NewEventState>(
                 isOpened = false,
                 number = "2",
                 notes = "After that add description",
-                expandHeight = null,
+                expandHeight = (56 * 3.2).toInt()
             )
         ),
         val date: ExpandInputFeature.State = ExpandInputFeature.State(
@@ -251,7 +243,7 @@ class NewEventVM : FeatureViewModel<NewEventVM.Event, NewEventVM.NewEventState>(
         val requestButton: RequestButtonFeature.State = RequestButtonFeature.State(
             text = "Got It",
             color = Color.Black,
-            isOpened = true
+            buttonState = RequestButtonFeature.State.ButtonState.Expanded,
         )
     )
 }

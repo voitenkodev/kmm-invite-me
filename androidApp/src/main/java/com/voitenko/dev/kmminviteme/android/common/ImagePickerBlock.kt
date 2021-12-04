@@ -27,7 +27,7 @@ fun ImagePickerBlock(
     onClick: (() -> Unit)? = null,
 ) = SimpleImage(
     modifier = Modifier
-        .padding(6.dp)
+        .padding(8.dp)
         .clip(AppTheme.shapes.medium)
         .background(AppTheme.colors.background)
         .alpha(alpha)

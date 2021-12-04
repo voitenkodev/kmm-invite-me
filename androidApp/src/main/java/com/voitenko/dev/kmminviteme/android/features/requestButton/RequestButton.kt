@@ -25,7 +25,7 @@ fun RequestButton(
     color1 = state.color,
     color2 = state.color,
     text = state.text,
-    state = state.isOpened,
+    state = state.buttonState == RequestButtonFeature.State.ButtonState.Expanded,
     onClick = onClick
 )
 

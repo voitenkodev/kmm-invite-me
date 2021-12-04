@@ -3,72 +3,72 @@ package com.voitenko.dev.kmminviteme.android.features.requestButton
 import androidx.compose.ui.graphics.Color
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOf
-import mvi.feature.Actor
+import mvi.feature.AsyncReducer
 import mvi.feature.Feature
-import mvi.feature.Feature2
-import mvi.feature.Reducer
+import mvi.feature.SyncReducer
 
 class RequestButtonFeature(
     initial: State = State()
-) : Feature2<RequestButtonFeature.Wish, RequestButtonFeature.Effect, RequestButtonFeature.State, Nothing>(
+) : Feature<RequestButtonFeature.Async, RequestButtonFeature.Sync, RequestButtonFeature.Side, RequestButtonFeature.State>(
     initial = initial,
-    actor = ActorImpl(),
-    reducer = ReducerImpl(),
+    asyncReducer = AsyncReducerImpl(),
+    syncReducer = SyncReducerImpl()
 ) {
 
-    sealed class Wish : Feature.Wish {
-        data class SetTitle(val text: String) : Wish()
-        data class SetColor(val color: Color) : Wish()
-        object Expand : Wish()
-        object Collapse : Wish()
-        object CallRequest : Wish()
+    sealed class Async : Wish.Async {
+        object CallRequest : Async()
     }
 
-    sealed class Effect : Feature.Effect {
-        data class SetTitle(val text: String) : Effect()
-        data class SetColor(val color: Color) : Effect()
-        data class CallRequest(val request: State.Request) : Effect()
-        object Expand : Effect()
-        object Collapse : Effect()
+    sealed class Side : Wish.Side {
+        object ShowToast : Side()
+    }
+
+    sealed class Sync : Wish.Sync {
+        data class SetTitle(val text: String) : Sync()
+        data class SetColor(val color: Color) : Sync()
+        object Expand : Sync()
+        object Collapse : Sync()
     }
 
     data class State(
         val text: String = "",
         val color: Color = Color.Black,
-        val isOpened: Boolean = false,
-        val request: Request = Request.DEFAULT,
+        val buttonState: ButtonState = ButtonState.Expanded,
     ) : Feature.State {
-        enum class Request {
-            SUCCESS, PROGRESS, ERROR, DEFAULT
-        }
+        enum class ButtonState { Expanded, Collapsed }
     }
 
-    class ActorImpl : Actor<Wish, State, Effect> {
-        override fun invoke(wish: Wish, state: State) = when (wish) {
-            is Wish.CallRequest -> flow {
-                emit(Effect.CallRequest(State.Request.PROGRESS))
-                delay(400)
-                emit(Effect.CallRequest(State.Request.SUCCESS))
-                delay(1000)
-                emit(Effect.CallRequest(State.Request.PROGRESS))
-                delay(200)
-                emit(Effect.CallRequest(State.Request.ERROR))
+    class AsyncReducerImpl : AsyncReducer<Async, State, Sync> {
+        override fun invoke(wish: Async, state: State) = when (wish) {
+            is Async.CallRequest -> flow {
+                emit(Sync.Collapse)
+                emit(Sync.SetTitle(""))
+                emit(Sync.SetColor(Color.LightGray))
+
+                delay(2000)
+                emit(Sync.Expand)
+                emit(Sync.SetTitle("Success"))
+                emit(Sync.SetColor(Color.Green))
+
+                delay(2000)
+                emit(Sync.Collapse)
+                emit(Sync.SetTitle(""))
+                emit(Sync.SetColor(Color.Cyan))
+
+                delay(2000)
+                emit(Sync.Expand)
+                emit(Sync.SetTitle("Success"))
+                emit(Sync.SetColor(Color.Red))
             }
-            is Wish.SetTitle -> flowOf(Effect.SetTitle(wish.text))
-            is Wish.Collapse -> flowOf(Effect.Collapse)
-            is Wish.Expand -> flowOf(Effect.Expand)
-            is Wish.SetColor -> flowOf(Effect.SetColor(wish.color))
         }
     }
 
-    class ReducerImpl : Reducer<Effect, State> {
-        override fun invoke(effect: Effect, state: State) = when (effect) {
-            is Effect.SetTitle -> state.copy(text = effect.text)
-            is Effect.CallRequest -> state.copy(request = effect.request)
-            is Effect.Collapse -> state.copy(isOpened = false)
-            is Effect.Expand -> state.copy(isOpened = true)
-            is Effect.SetColor -> state.copy(color = effect.color)
+    class SyncReducerImpl : SyncReducer<Sync, State> {
+        override fun invoke(wish: Sync, state: State) = when (wish) {
+            is Sync.SetTitle -> state.copy(text = wish.text)
+            is Sync.Collapse -> state.copy(buttonState = State.ButtonState.Collapsed)
+            is Sync.Expand -> state.copy(buttonState = State.ButtonState.Expanded)
+            is Sync.SetColor -> state.copy(color = wish.color)
         }
     }
 }

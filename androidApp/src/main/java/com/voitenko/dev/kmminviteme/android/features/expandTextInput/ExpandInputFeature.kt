@@ -1,22 +1,26 @@
 package com.voitenko.dev.kmminviteme.android.features.expandTextInput
 
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import mvi.feature.EffectDistributor
 import mvi.feature.Feature
-import mvi.feature.Feature1
-import mvi.feature.Reducer
+import mvi.feature.SyncReducer
 
 class ExpandInputFeature(
     initial: State = State()
-) : Feature1<ExpandInputFeature.Wish, ExpandInputFeature.State, Nothing>(
+) : Feature<Nothing, ExpandInputFeature.Sync, Nothing, ExpandInputFeature.State>(
     initial = initial,
-    reducer = ReducerImpl(),
+    syncReducer = SyncReducerImpl(initial),
+    effectDistributor = DistributorImpl()
 ) {
 
-    sealed class Wish : Feature.Wish {
-        object Expand : Wish()
-        object Collapse : Wish()
-        data class SetText(val text: String) : Wish()
-        object ShowError : Wish()
-        object HideError : Wish()
+    sealed class Sync : Wish.Sync {
+        object Expand : Sync()
+        object Collapse : Sync()
+        data class SetText(val text: String) : Sync()
+        object ShowError : Sync()
+        object HideError : Sync()
+        object Reboot : Sync()
     }
 
     data class State(
@@ -45,13 +49,26 @@ class ExpandInputFeature(
         )
     }
 
-    class ReducerImpl : Reducer<Wish, State> {
-        override fun invoke(wish: Wish, state: State) = when (wish) {
-            is Wish.SetText -> state.copy(input = state.input.copy(text = wish.text))
-            Wish.Collapse -> state.copy(expander = state.expander.copy(isOpened = false))
-            Wish.Expand -> state.copy(expander = state.expander.copy(isOpened = true))
-            is Wish.ShowError -> state.copy(error = state.error.copy(isShowed = true))
-            is Wish.HideError -> state.copy(error = state.error.copy(isShowed = false))
+    class SyncReducerImpl(private val initial: State) : SyncReducer<Sync, State> {
+        override fun invoke(wish: Sync, state: State) = when (wish) {
+            is Sync.SetText -> state.copy(input = state.input.copy(text = wish.text))
+            is Sync.Collapse -> state.copy(expander = state.expander.copy(isOpened = false))
+            is Sync.Expand -> state.copy(expander = state.expander.copy(isOpened = true))
+            is Sync.HideError -> state.copy(error = state.error.copy(isShowed = false))
+            is Sync.ShowError -> state.copy(error = state.error.copy(isShowed = true))
+            is Sync.Reboot -> initial
         }
+    }
+
+    class DistributorImpl : EffectDistributor<Sync, State> {
+        override fun invoke(sync: Sync, state: State): Flow<Wish> = flow {
+            validate(sync, state) {
+                emit(Sync.HideError)
+            }
+        }
+
+        private suspend fun validate(sync: Sync, state: State, action: suspend () -> Unit) =
+            takeIf { sync is Sync.SetText && sync.text.isNotEmpty() && state.error.isShowed }
+                ?.let { action.invoke() }
     }
 }

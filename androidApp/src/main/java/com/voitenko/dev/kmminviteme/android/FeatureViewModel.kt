@@ -18,12 +18,4 @@ abstract class FeatureViewModel<Event, Model> : ViewModel() {
     abstract val processor: MviCore<Model>
 
     val state: Model get() = processor.state.value
-
-    fun want(tag: MviCore.FeatureTag, wish: Feature.Wish) =
-        processor.want(tag = tag, wish = wish)
-
-    fun <News : Feature.News> news(tag: MviCore.FeatureTag, lambda: (News) -> Unit) =
-        processor.news<News>(tag = tag)
-            ?.onEach { lambda.invoke(it) }
-            ?.launchIn(viewModelScope)
 }

@@ -4,30 +4,31 @@ import android.net.Uri
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Image
 import androidx.compose.ui.graphics.vector.ImageVector
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import mvi.feature.EffectDistributor
 import mvi.feature.Feature
-import mvi.feature.Feature1
-import mvi.feature.NewsPublisher
-import mvi.feature.Reducer
+import mvi.feature.SyncReducer
 
 class ExpandImagePickFeature(
     initial: State = State()
-) : Feature1<ExpandImagePickFeature.Wish, ExpandImagePickFeature.State, ExpandImagePickFeature.News>(
+) : Feature<Nothing, ExpandImagePickFeature.Sync, ExpandImagePickFeature.Side, ExpandImagePickFeature.State>(
     initial = initial,
-    reducer = ReducerImpl(),
-    newsPublisher = NewsPublisherImpl()
+    syncReducer = SyncReducerImpl(initial),
+    effectDistributor = DistributorImpl()
 ) {
 
-    sealed class Wish : Feature.Wish {
-        object Expand : Wish()
-        object Collapse : Wish()
-        object ShowError : Wish()
-        object HideError : Wish()
-        data class SetImage(val image: Uri) : Wish()
-        object Pick : Wish()
+    sealed class Sync : Wish.Sync {
+        object Expand : Sync()
+        object Collapse : Sync()
+        object ShowError : Sync()
+        object HideError : Sync()
+        data class SetImage(val image: Uri) : Sync()
+        object Reboot : Sync()
     }
 
-    sealed class News : Feature.News {
-        object Pick : News()
+    sealed class Side : Wish.Side {
+        object Pick : Side()
     }
 
     data class State(
@@ -54,21 +55,26 @@ class ExpandImagePickFeature(
         )
     }
 
-    class ReducerImpl : Reducer<Wish, State> {
-        override fun invoke(wish: Wish, state: State) = when (wish) {
-            Wish.Collapse -> state.copy(expander = state.expander.copy(isOpened = false))
-            Wish.Expand -> state.copy(expander = state.expander.copy(isOpened = true))
-            is Wish.ShowError -> state.copy(error = state.error.copy(isShowed = true))
-            is Wish.HideError -> state.copy(error = state.error.copy(isShowed = false))
-            is Wish.SetImage -> state.copy(image = state.image.copy(image = wish.image))
-            Wish.Pick -> state
+    class SyncReducerImpl(private val initial: State) : SyncReducer<Sync, State> {
+        override fun invoke(wish: Sync, state: State) = when (wish) {
+            is Sync.Collapse -> state.copy(expander = state.expander.copy(isOpened = false))
+            is Sync.Expand -> state.copy(expander = state.expander.copy(isOpened = true))
+            is Sync.ShowError -> state.copy(error = state.error.copy(isShowed = true))
+            is Sync.HideError -> state.copy(error = state.error.copy(isShowed = false))
+            is Sync.SetImage -> state.copy(image = state.image.copy(image = wish.image))
+            is Sync.Reboot -> initial
         }
     }
 
-    class NewsPublisherImpl : NewsPublisher<Wish, State, News> {
-        override fun invoke(effect: Wish, state: State) = when (effect) {
-            Wish.Pick -> News.Pick
-            else -> null
+    class DistributorImpl : EffectDistributor<Sync, State> {
+        override fun invoke(sync: Sync, state: State): Flow<Wish> = flow {
+            validate(sync, state) {
+                emit(Sync.HideError)
+            }
         }
+
+        private suspend fun validate(sync: Sync, state: State, action: suspend () -> Unit) =
+            takeIf { sync is Sync.SetImage && sync.image != Uri.EMPTY && state.error.isShowed }
+                ?.let { action.invoke() }
     }
 }
