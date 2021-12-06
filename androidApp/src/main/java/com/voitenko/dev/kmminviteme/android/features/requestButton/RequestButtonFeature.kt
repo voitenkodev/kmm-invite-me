@@ -1,8 +1,11 @@
 package com.voitenko.dev.kmminviteme.android.features.requestButton
 
+import android.util.Log
 import androidx.compose.ui.graphics.Color
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import mvi.feature.AffectConventions
 import mvi.feature.AsyncReducer
 import mvi.feature.Feature
 import mvi.feature.SyncReducer
@@ -12,7 +15,8 @@ class RequestButtonFeature(
 ) : Feature<RequestButtonFeature.Async, RequestButtonFeature.Sync, RequestButtonFeature.Side, RequestButtonFeature.State>(
     initial = initial,
     asyncReducer = AsyncReducerImpl(),
-    syncReducer = SyncReducerImpl()
+    syncReducer = SyncReducerImpl(),
+    affectConventions = DistributorImpl()
 ) {
 
     sealed class Async : Wish.Async {
@@ -41,6 +45,7 @@ class RequestButtonFeature(
     class AsyncReducerImpl : AsyncReducer<Async, State, Sync> {
         override fun invoke(wish: Async, state: State) = when (wish) {
             is Async.CallRequest -> flow {
+                Log.d("showLog", "REALLY CALL CallRequest")
                 emit(Sync.Collapse)
                 emit(Sync.SetTitle(""))
                 emit(Sync.SetColor(Color.LightGray))
@@ -69,6 +74,16 @@ class RequestButtonFeature(
             is Sync.Collapse -> state.copy(buttonState = State.ButtonState.Collapsed)
             is Sync.Expand -> state.copy(buttonState = State.ButtonState.Expanded)
             is Sync.SetColor -> state.copy(color = wish.color)
+        }
+    }
+
+    class DistributorImpl : AffectConventions<State> {
+        override fun invoke(sync: Wish, state: State): Flow<Wish> = flow {
+            if (sync is Async.CallRequest && state.color == Color.Red) {
+                emit(Side.ShowToast)
+            }
+
+            Log.d("showLog", "${sync::class.java.simpleName}")
         }
     }
 }

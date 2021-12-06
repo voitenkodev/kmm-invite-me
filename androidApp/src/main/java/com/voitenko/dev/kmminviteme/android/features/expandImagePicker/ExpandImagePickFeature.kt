@@ -6,7 +6,7 @@ import androidx.compose.material.icons.filled.Image
 import androidx.compose.ui.graphics.vector.ImageVector
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import mvi.feature.EffectDistributor
+import mvi.feature.AffectConventions
 import mvi.feature.Feature
 import mvi.feature.SyncReducer
 
@@ -15,7 +15,7 @@ class ExpandImagePickFeature(
 ) : Feature<Nothing, ExpandImagePickFeature.Sync, ExpandImagePickFeature.Side, ExpandImagePickFeature.State>(
     initial = initial,
     syncReducer = SyncReducerImpl(initial),
-    effectDistributor = DistributorImpl()
+//    affectConventions = DistributorImpl()
 ) {
 
     sealed class Sync : Wish.Sync {
@@ -66,15 +66,17 @@ class ExpandImagePickFeature(
         }
     }
 
-    class DistributorImpl : EffectDistributor<Sync, State> {
-        override fun invoke(sync: Sync, state: State): Flow<Wish> = flow {
-            validate(sync, state) {
-                emit(Sync.HideError)
-            }
-        }
-
-        private suspend fun validate(sync: Sync, state: State, action: suspend () -> Unit) =
-            takeIf { sync is Sync.SetImage && sync.image != Uri.EMPTY && state.error.isShowed }
-                ?.let { action.invoke() }
-    }
+//    class DistributorImpl : AffectConventions<Nothing, Sync, Side, State> {
+//        override fun onSync(sync: Sync, state: State): Flow<Wish> = flow {
+//            validate(sync, state) { emit(Sync.HideError) }
+//        }
+//
+//        override fun onAsync(async: Nothing, state: State): Flow<Wish> = flow {}
+//
+//        override fun onSide(side: Side, state: State): Flow<Wish> = flow {}
+//
+//        private suspend fun validate(sync: Sync, state: State, action: suspend () -> Unit) =
+//            takeIf { sync is Sync.SetImage && sync.image != Uri.EMPTY && state.error.isShowed }
+//                ?.let { action.invoke() }
+//    }
 }

@@ -2,7 +2,7 @@ package com.voitenko.dev.kmminviteme.android.features.expandTextInput
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import mvi.feature.EffectDistributor
+import mvi.feature.AffectConventions
 import mvi.feature.Feature
 import mvi.feature.SyncReducer
 
@@ -11,7 +11,7 @@ class ExpandInputFeature(
 ) : Feature<Nothing, ExpandInputFeature.Sync, Nothing, ExpandInputFeature.State>(
     initial = initial,
     syncReducer = SyncReducerImpl(initial),
-    effectDistributor = DistributorImpl()
+//    affectConventions = DistributorImpl()
 ) {
 
     sealed class Sync : Wish.Sync {
@@ -60,15 +60,19 @@ class ExpandInputFeature(
         }
     }
 
-    class DistributorImpl : EffectDistributor<Sync, State> {
-        override fun invoke(sync: Sync, state: State): Flow<Wish> = flow {
-            validate(sync, state) {
-                emit(Sync.HideError)
-            }
-        }
-
-        private suspend fun validate(sync: Sync, state: State, action: suspend () -> Unit) =
-            takeIf { sync is Sync.SetText && sync.text.isNotEmpty() && state.error.isShowed }
-                ?.let { action.invoke() }
-    }
+//    class DistributorImpl : AffectConventions<Nothing, Sync, Nothing, State> {
+//        override fun onSync(sync: Sync, state: State): Flow<Wish> = flow {
+//            validate(sync, state) { emit(Sync.HideError) }
+//        }
+//
+//        override fun onAsync(async: Nothing, state: State): Flow<Wish> = flow {
+//        }
+//
+//        override fun onSide(side: Nothing, state: State): Flow<Wish> = flow {
+//        }
+//
+//        private suspend fun validate(sync: Sync, state: State, action: suspend () -> Unit) =
+//            takeIf { sync is Sync.SetText && sync.text.isNotEmpty() && state.error.isShowed }
+//                ?.let { action.invoke() }
+//    }
 }

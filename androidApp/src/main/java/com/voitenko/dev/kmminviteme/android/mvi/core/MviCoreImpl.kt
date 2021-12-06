@@ -25,15 +25,15 @@ public class MviCoreImpl<Root> internal constructor(
     }
 
     override fun <Async : Feature.Wish.Async> want(tag: MviCore.FeatureTag, wish: Async) {
-        (features[tag] as? Feature<Async, *, *, *>)?.want(wish)?.launchIn(scope)
+        (features[tag] as? Feature<Async, *, *, *>)?.want(wish, scope)
     }
 
     override fun <Sync : Feature.Wish.Sync> want(tag: MviCore.FeatureTag, wish: Sync) {
-        (features[tag] as? Feature<*, Sync, *, *>)?.want(wish)?.launchIn(scope)
+        (features[tag] as? Feature<*, Sync, *, *>)?.want(wish, scope)
     }
 
     override fun <Side : Feature.Wish.Side> want(tag: MviCore.FeatureTag, wish: Side) {
-        (features[tag] as? Feature<*, *, Side, *>)?.want(wish)?.launchIn(scope)
+        (features[tag] as? Feature<*, *, Side, *>)?.want(wish, scope)
     }
 
     override fun <Side : Feature.Wish.Side> side(tag: MviCore.FeatureTag) =

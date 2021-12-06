@@ -1,7 +1,8 @@
 package mvi.feature
 
-import android.util.Log
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
 import mvi.IncorrectFeatureByTag
@@ -9,17 +10,21 @@ import mvi.MissingActorException
 
 public typealias AsyncReducer<Async, State, Sync> = (wish: Async, state: State) -> Flow<Sync>
 public typealias SyncReducer<Sync, State> = (wish: Sync, state: State) -> State
-public typealias EffectDistributor<Sync, State> = (sync: Sync, state: State) -> Flow<Feature.Wish>
+public typealias AffectConventions<State> = (sync: Feature.Wish, state: State) -> Flow<Feature.Wish>
+
+class FeatureFactory() {
+
+}
 
 @OptIn(FlowPreview::class)
 public abstract class Feature<Async : Feature.Wish.Async, Sync : Feature.Wish.Sync, Side : Feature.Wish.Side, State : Feature.State>(
     initial: State,
     private val asyncReducer: AsyncReducer<Async, State, Sync>? = null,
     private val syncReducer: SyncReducer<Sync, State>,
-    private val effectDistributor: (EffectDistributor<Sync, State>)? = null,
+    private val affectConventions: (AffectConventions<State>)? = null,
 ) {
 
-    val _side: Channel<Side> = Channel(Channel.BUFFERED)
+    private val _side: Channel<Side> = Channel(Channel.BUFFERED)
     public val side: Flow<Side> = _side.receiveAsFlow()
 
     private val _state = MutableStateFlow(initial)
@@ -33,36 +38,36 @@ public abstract class Feature<Async : Feature.Wish.Async, Sync : Feature.Wish.Sy
         public interface Side : Wish
     }
 
-    public fun want(wish: Async): Flow<Unit> = flowOf(wish)
+    public fun want(wish: Async, scope: CoroutineScope): Job = flowOf(wish)
+        .affectConvention(wish, scope)
         .flatMapConcat { asyncReducer?.invoke(it, _state.value) ?: throw MissingActorException }
-        .flatMapConcat { want(it) }
-        .toUnit()
+        .onEach { want(it, scope) }
+        .launchIn(scope)
 
-    public fun want(wish: Sync): Flow<Unit> = flowOf(wish)
+    public fun want(wish: Sync, scope: CoroutineScope): Job = flowOf(wish)
+        .affectConvention(wish, scope)
         .map { syncReducer.invoke(it, _state.value) }
         .distinctUntilChanged()
         .onEach { _state.emit(it) }
         .catch { throw IncorrectFeatureByTag }
-        .obtainDistribution(wish)
-        .map { Log.d("showLog", "MAPPPPPPPPPPPP") }
-        .toUnit()
+        .launchIn(scope)
 
-    public fun want(wish: Side): Flow<Unit> = flowOf(wish)
+    public fun want(wish: Side, scope: CoroutineScope): Job = flowOf(wish)
+        .affectConvention(wish, scope)
         .map { _side.send(wish) }
-        .toUnit()
+        .launchIn(scope)
 
-    private fun Flow<Any>.obtainDistribution(sync: Sync): Flow<Any> = flatMapConcat {
-        effectDistributor?.invoke(sync, _state.value)
-            ?.flatMapConcat { distributeEffect(it) }
-            ?: flowOf(it)
+    private fun <T> Flow<T>.affectConvention(wish: Wish, scope: CoroutineScope): Flow<T> = onEach {
+        affectConventions?.invoke(wish, _state.value)
+            ?.onEach { distributeAffect(it, scope) }
+            ?.launchIn(scope)
     }
-
-    private fun Flow<Any>.toUnit() = this.map { }
 
     @FlowPreview
     @Suppress("UNCHECKED_CAST")
-    private fun distributeEffect(w: Wish): Flow<Any> = (w as? Sync)?.let { want(it) }
-        ?: (w as? Async)?.let { want(it) }
-        ?: (w as? Side)?.let { want(it) }
-        ?: flowOf()
+    private fun distributeAffect(w: Wish, scope: CoroutineScope) =
+        (w as? Sync)?.let { want(it, scope) }
+            ?: (w as? Async)?.let { want(it, scope) }
+            ?: (w as? Side)?.let { want(it, scope) }
+            ?: flowOf(Unit)
 }
