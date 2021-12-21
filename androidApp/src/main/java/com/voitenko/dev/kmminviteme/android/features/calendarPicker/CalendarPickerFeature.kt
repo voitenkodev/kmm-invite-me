@@ -1,7 +1,7 @@
 package com.voitenko.dev.kmminviteme.android.features.calendarPicker
 
-import mvi.feature.Feature
-import mvi.feature.SyncReducer
+import mvi.Feature
+import mvi.SyncReducer
 
 class CalendarPickerFeature constructor(
     initial: State = State()

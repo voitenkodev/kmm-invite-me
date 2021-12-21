@@ -6,16 +6,16 @@ import androidx.compose.material.icons.filled.Image
 import androidx.compose.ui.graphics.vector.ImageVector
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import mvi.feature.AffectConventions
-import mvi.feature.Feature
-import mvi.feature.SyncReducer
+import mvi.AffectConventions
+import mvi.Feature
+import mvi.SyncReducer
 
 class ExpandImagePickFeature(
     initial: State = State()
 ) : Feature<Nothing, ExpandImagePickFeature.Sync, ExpandImagePickFeature.Side, ExpandImagePickFeature.State>(
     initial = initial,
     syncReducer = SyncReducerImpl(initial),
-//    affectConventions = DistributorImpl()
+    affectConventions = AffectConventionsImpl()
 ) {
 
     sealed class Sync : Wish.Sync {
@@ -66,17 +66,14 @@ class ExpandImagePickFeature(
         }
     }
 
-//    class DistributorImpl : AffectConventions<Nothing, Sync, Side, State> {
-//        override fun onSync(sync: Sync, state: State): Flow<Wish> = flow {
-//            validate(sync, state) { emit(Sync.HideError) }
-//        }
-//
-//        override fun onAsync(async: Nothing, state: State): Flow<Wish> = flow {}
-//
-//        override fun onSide(side: Side, state: State): Flow<Wish> = flow {}
-//
-//        private suspend fun validate(sync: Sync, state: State, action: suspend () -> Unit) =
-//            takeIf { sync is Sync.SetImage && sync.image != Uri.EMPTY && state.error.isShowed }
-//                ?.let { action.invoke() }
-//    }
+    class AffectConventionsImpl : AffectConventions<State> {
+
+        override fun invoke(wish: Wish, state: State): Flow<Wish> = flow {
+            validate(wish, state) { emit(Sync.HideError) }
+        }
+
+        private suspend fun validate(wish: Wish, state: State, action: suspend () -> Unit) =
+            takeIf { wish is Sync.SetImage && wish.image != Uri.EMPTY && state.error.isShowed }
+                ?.let { action.invoke() }
+    }
 }

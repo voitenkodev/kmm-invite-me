@@ -1,4 +1,4 @@
-package com.voitenko.dev.kmminviteme.android.features.expandTextInput
+package com.voitenko.dev.kmminviteme.android
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -6,12 +6,12 @@ import mvi.AffectConventions
 import mvi.Feature
 import mvi.SyncReducer
 
-class ExpandInputFeature(
+class ExampleInputFeature(
     initial: State = State()
-) : Feature<Nothing, ExpandInputFeature.Sync, Nothing, ExpandInputFeature.State>(
+) : Feature<Nothing, ExampleInputFeature.Sync, Nothing, ExampleInputFeature.State>(
     initial = initial,
-    syncReducer = SyncReducerImpl(initial),
-    affectConventions = AffectConventionsImpl()
+    syncReducer = SyncReducerImpl(),
+    affectConventions = DistributorImpl()
 ) {
 
     sealed class Sync : Wish.Sync {
@@ -20,7 +20,6 @@ class ExpandInputFeature(
         data class SetText(val text: String) : Sync()
         object ShowError : Sync()
         object HideError : Sync()
-        object Reboot : Sync()
     }
 
     data class State(
@@ -37,8 +36,6 @@ class ExpandInputFeature(
         data class Input(
             val placeholder: String = "",
             val text: String = "",
-            val isFocused: Boolean = false,
-            val readOnly: Boolean = false
         )
 
         data class Expander(
@@ -49,25 +46,24 @@ class ExpandInputFeature(
         )
     }
 
-    class SyncReducerImpl(private val initial: State) : SyncReducer<Sync, State> {
+    class SyncReducerImpl : SyncReducer<Sync, State> {
         override fun invoke(wish: Sync, state: State) = when (wish) {
             is Sync.SetText -> state.copy(input = state.input.copy(text = wish.text))
             is Sync.Collapse -> state.copy(expander = state.expander.copy(isOpened = false))
             is Sync.Expand -> state.copy(expander = state.expander.copy(isOpened = true))
             is Sync.HideError -> state.copy(error = state.error.copy(isShowed = false))
             is Sync.ShowError -> state.copy(error = state.error.copy(isShowed = true))
-            is Sync.Reboot -> initial
         }
     }
 
-    class AffectConventionsImpl : AffectConventions<State> {
+    class DistributorImpl : AffectConventions<State> {
 
         override fun invoke(wish: Wish, state: State): Flow<Wish> = flow {
             validate(wish, state) { emit(Sync.HideError) }
         }
 
         private suspend fun validate(wish: Wish, state: State, action: suspend () -> Unit) =
-            takeIf { wish is Sync.SetText && wish.text.isNotEmpty() && state.error.isShowed }
+            takeIf { wish is Sync.SetText && wish.text.isNotBlank() && state.error.isShowed }
                 ?.let { action.invoke() }
     }
 }

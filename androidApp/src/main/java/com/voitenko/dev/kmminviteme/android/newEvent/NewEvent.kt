@@ -28,7 +28,7 @@ import kotlinx.coroutines.flow.onEach
 @Composable
 fun NewEvent(navController: NavController, vm: NewEventVM = viewModel()) {
 
-    val state = vm.processor.state.collectAsState()
+    val state = vm.processor.root.collectAsState()
 
     val launcher = contentLaunch { vm.send(NewEventVM.Event.PutImage(it)) }
 

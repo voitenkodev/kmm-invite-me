@@ -5,10 +5,10 @@ import androidx.compose.ui.graphics.Color
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import mvi.feature.AffectConventions
-import mvi.feature.AsyncReducer
-import mvi.feature.Feature
-import mvi.feature.SyncReducer
+import mvi.AffectConventions
+import mvi.AsyncReducer
+import mvi.Feature
+import mvi.SyncReducer
 
 class RequestButtonFeature(
     initial: State = State()

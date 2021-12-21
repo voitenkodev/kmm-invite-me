@@ -10,7 +10,7 @@ import com.voitenko.dev.kmminviteme.android.features.calendarPicker.CalendarPick
 import com.voitenko.dev.kmminviteme.android.features.expandImagePicker.ExpandImagePickFeature
 import com.voitenko.dev.kmminviteme.android.features.expandTextInput.ExpandInputFeature
 import com.voitenko.dev.kmminviteme.android.features.requestButton.RequestButtonFeature
-import mvi.core.MviCore
+import mvi.MviCore
 
 class NewEventVM : FeatureViewModel<NewEventVM.Event, NewEventVM.NewEventState>() {
 
@@ -18,7 +18,7 @@ class NewEventVM : FeatureViewModel<NewEventVM.Event, NewEventVM.NewEventState>(
         TITLE, DESCRIPTION, DATE, LOCATION, IMAGE, CALENDAR_PICKER, REQUEST_BUTTON
     }
 
-    override val processor = MviCore.featureProcessor(root = NewEventState())
+    override val processor = MviCore.Builder(root = NewEventState())
         .feature(
             tag = TAG.TITLE,
             feature = { ExpandInputFeature(it.title) },
@@ -47,7 +47,7 @@ class NewEventVM : FeatureViewModel<NewEventVM.Event, NewEventVM.NewEventState>(
             tag = TAG.REQUEST_BUTTON,
             feature = { RequestButtonFeature(it.requestButton) },
             updateRoot = { copy(requestButton = it) }
-        ).launchIn(viewModelScope)
+        ).build(viewModelScope)
 
     sealed class Event : FeatureViewModel.Event {
         object ClickGotIt : Event()

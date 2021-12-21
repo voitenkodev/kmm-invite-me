@@ -7,5 +7,5 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 
 @Composable
 fun ExampleScreen(vm: ExampleViewModel = viewModel()) {
-    val state = vm.mviProcessor.state.collectAsState()
+    val state = vm.mviProcessor.root.collectAsState()
 }
