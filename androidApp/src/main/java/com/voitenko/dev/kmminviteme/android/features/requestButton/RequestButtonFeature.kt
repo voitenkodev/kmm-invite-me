@@ -45,7 +45,6 @@ class RequestButtonFeature(
     class AsyncReducerImpl : AsyncReducer<Async, State, Sync> {
         override fun invoke(wish: Async, state: State) = when (wish) {
             is Async.CallRequest -> flow {
-                Log.d("showLog", "REALLY CALL CallRequest")
                 emit(Sync.Collapse)
                 emit(Sync.SetTitle(""))
                 emit(Sync.SetColor(Color.LightGray))

@@ -13,11 +13,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.coil.rememberCoilPainter
 import com.voitenko.dev.kmminviteme.android.common.base.FabIcon
 import com.voitenko.dev.kmminviteme.android.common.base.SimpleImage
 import com.voitenko.dev.kmminviteme.android.common.theme.AppTheme
+import com.voitenko.dev.kmminviteme.android.common.theme.MainTheme
 
 @Composable
 fun ImagePickerBlock(

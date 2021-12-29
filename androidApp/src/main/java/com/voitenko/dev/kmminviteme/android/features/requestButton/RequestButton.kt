@@ -1,8 +1,6 @@
 package com.voitenko.dev.kmminviteme.android.features.requestButton
 
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
@@ -11,11 +9,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.voitenko.dev.kmminviteme.android.common.ImagePickerBlock
 import com.voitenko.dev.kmminviteme.android.common.base.Title
 import com.voitenko.dev.kmminviteme.android.common.base.box.Expander
 import com.voitenko.dev.kmminviteme.android.common.base.box.ExpanderContent
 import com.voitenko.dev.kmminviteme.android.common.theme.AppTheme
+import com.voitenko.dev.kmminviteme.android.common.theme.MainTheme
 
 @Composable
 fun RequestButton(
@@ -77,3 +78,28 @@ private fun ExpandBody(
         )
     }
 )
+
+@Preview
+@Composable
+fun RequestButton_Preview() {
+    val preview = RequestButtonFeature.State(
+        text = "Got It",
+        color = Color.Yellow,
+        buttonState = RequestButtonFeature.State.ButtonState.Collapsed,
+    )
+    MainTheme {
+        Column {
+            RequestButton(
+                state = preview,
+                onClick = {}
+            )
+            RequestButton(
+                state = preview.copy(
+                    buttonState = RequestButtonFeature.State.ButtonState.Expanded,
+                    color = Color.Red
+                ),
+                onClick = {}
+            )
+        }
+    }
+}

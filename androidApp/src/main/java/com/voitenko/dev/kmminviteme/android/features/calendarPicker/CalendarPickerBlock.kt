@@ -5,8 +5,10 @@ import android.widget.CalendarView
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.viewinterop.AndroidView
 import com.voitenko.dev.kmminviteme.android.common.BottomSheetBlock
+import com.voitenko.dev.kmminviteme.android.common.theme.MainTheme
 import java.time.LocalDate
 
 
@@ -41,3 +43,18 @@ fun CustomCalendarView(onDateSelected: (LocalDate) -> Unit) = AndroidView(
         }
     }
 )
+
+@Preview
+@Composable
+fun ExpandImagePickBlock_Preview() {
+    val preview = CalendarPickerFeature.State(
+        isOpen = true
+    )
+    MainTheme {
+        CalendarPickerBlock(
+            state = preview,
+            content = { },
+            onClose = {}
+        )
+    }
+}
