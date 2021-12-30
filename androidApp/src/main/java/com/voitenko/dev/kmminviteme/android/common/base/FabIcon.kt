@@ -30,13 +30,3 @@ fun FabIcon(
         .padding(12.dp),
     contentDescription = "icon",
 )
-
-
-@Preview
-@Composable
-fun FabIcon_Preview() {
-    FabIcon(
-        modifier = Modifier.size(56.dp),
-        imageVector = Icons.Default.Phone
-    )
-}

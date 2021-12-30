@@ -1,5 +1,6 @@
 package com.voitenko.dev.kmminviteme.remote
 
+import com.voitenko.dev.kmminviteme.KtorFactory
 import io.ktor.client.features.*
 import io.ktor.client.features.json.*
 import io.ktor.client.features.json.serializer.*

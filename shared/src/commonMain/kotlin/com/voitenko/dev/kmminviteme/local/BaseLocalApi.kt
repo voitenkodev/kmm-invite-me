@@ -5,6 +5,7 @@ import com.squareup.sqldelight.runtime.coroutines.asFlow
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
+
 internal fun database(driver: SqlDriver): AppDatabaseQueries = AppDataBase.invoke(
     driver,
     Adapters.dateAdapter,
