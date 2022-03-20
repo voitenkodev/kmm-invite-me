@@ -18,7 +18,7 @@ repositories {
 
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:1.5.31")
-    implementation("com.android.tools.build:gradle:7.1.0-beta04")
+    implementation("com.android.tools.build:gradle:7.3.0-alpha07")
 }
 
 buildscript {
@@ -28,7 +28,7 @@ buildscript {
     }
 
     dependencies {
-        classpath("com.android.tools.build:gradle:7.1.0-beta04")
+        classpath("com.android.tools.build:gradle:7.3.0-alpha07")
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.5.31")
     }
 }
