@@ -39,7 +39,7 @@ kotlin {
     implementation(common = libs.kotlinx.datetime)
     implementation(common = libs.kotlinx.serialization.json)
     implementations(
-        common = listOf(libs.ktor.core, libs.ktor.logging, libs.ktor.serialization),
+        common = listOf(libs.ktor.core, libs.ktor.logging, libs.ktor.serialization, libs.ktor.negotiation),
         android = listOf(libs.ktor.okhttp),
         ios = listOf(libs.ktor.ios)
     )

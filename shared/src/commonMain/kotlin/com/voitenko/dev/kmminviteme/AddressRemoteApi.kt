@@ -7,11 +7,11 @@ import io.ktor.client.request.*
 
 public class AddressRemoteApi(private val service: HttpClient = Client.address()) {
 
-    public suspend fun getAddressByLatLng(lat: Double, lng: Double): AddressResponse? =
-        service.get {
-            url {
-                path("geocoding/v5/mapbox.places/${lng},${lat}.json")
-                parameter("limit", "1")
-            }
-        }
+//    public suspend fun getAddressByLatLng(lat: Double, lng: Double): AddressResponse? = TODO FIX
+//        service.get {
+//            url {
+//                path("geocoding/v5/mapbox.places/${lng},${lat}.json")
+//                parameter("limit", "1")
+//            }
+//        }
 }

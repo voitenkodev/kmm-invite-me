@@ -48,7 +48,7 @@ android {
     buildTypes.getByName("release") { isMinifyEnabled = false }
 
     buildFeatures.compose = true
-    composeOptions.kotlinCompilerExtensionVersion = "1.0.4"
+    composeOptions.kotlinCompilerExtensionVersion = "1.2.0-alpha05"
 
     ignoreExperimental()
 }

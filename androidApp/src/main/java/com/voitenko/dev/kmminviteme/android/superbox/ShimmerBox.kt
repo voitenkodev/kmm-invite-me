@@ -1,4 +1,4 @@
-package com.voitenko.dev.kmminviteme.android.common.base.box
+package com.voitenko.dev.kmminviteme.android.superbox
 
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -17,12 +17,12 @@ fun ShimmerBox(
     content: (@Composable (Brush) -> Unit)? = null,
 ) = BoxWithConstraints(modifier = modifier) {
 
+    val _gradient = gradient + gradient.reversed()
+
     val durationMillis = 1300
     val delayMillis = 0
-
     val cardWidthPx = with(LocalDensity.current) { (maxWidth).toPx() }
     val cardHeightPx = with(LocalDensity.current) { (maxHeight).toPx() }
-
     val gradientWidth: Float = (0.7f * cardHeightPx)
     val infiniteTransition = rememberInfiniteTransition()
 
@@ -32,10 +32,8 @@ fun ShimmerBox(
         animationSpec = infiniteRepeatable(
             repeatMode = RepeatMode.Restart,
             animation = tween(
-                durationMillis = durationMillis,
-                easing = LinearEasing,
-                delayMillis = delayMillis
-            ),
+                durationMillis = durationMillis, easing = LinearEasing, delayMillis = delayMillis
+            )
         )
     )
     val yCardShimmer = infiniteTransition.animateFloat(
@@ -44,14 +42,12 @@ fun ShimmerBox(
         animationSpec = infiniteRepeatable(
             repeatMode = RepeatMode.Restart,
             animation = tween(
-                durationMillis = durationMillis,
-                easing = LinearEasing,
-                delayMillis = delayMillis
-            ),
+                durationMillis = durationMillis, easing = LinearEasing, delayMillis = delayMillis
+            )
         )
     )
     val brush = linearGradient(
-        colors = gradient,
+        colors = _gradient,
         start = Offset(xCardShimmer.value - gradientWidth, yCardShimmer.value - gradientWidth),
         end = Offset(xCardShimmer.value, yCardShimmer.value)
     )
