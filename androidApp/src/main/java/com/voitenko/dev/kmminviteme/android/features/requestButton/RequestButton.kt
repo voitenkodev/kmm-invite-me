@@ -11,12 +11,11 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.voitenko.dev.kmminviteme.android.common.ImagePickerBlock
 import com.voitenko.dev.kmminviteme.android.common.base.Title
 import com.voitenko.dev.kmminviteme.android.common.base.box.Expander
 import com.voitenko.dev.kmminviteme.android.common.base.box.ExpanderContent
-import com.voitenko.dev.kmminviteme.android.common.theme.AppTheme
-import com.voitenko.dev.kmminviteme.android.common.theme.MainTheme
+import com.voitenko.dev.kmminviteme.android.designsystem.AppTheme
+import com.voitenko.dev.kmminviteme.android.designsystem.Theme
 
 @Composable
 fun RequestButton(
@@ -87,7 +86,7 @@ fun RequestButton_Preview() {
         color = Color.Yellow,
         buttonState = RequestButtonFeature.State.ButtonState.Collapsed,
     )
-    MainTheme {
+    Theme {
         Column {
             RequestButton(
                 state = preview,

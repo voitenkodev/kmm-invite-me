@@ -6,6 +6,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Image
 import androidx.compose.runtime.Composable
@@ -13,13 +14,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.coil.rememberCoilPainter
 import com.voitenko.dev.kmminviteme.android.common.base.FabIcon
 import com.voitenko.dev.kmminviteme.android.common.base.SimpleImage
-import com.voitenko.dev.kmminviteme.android.common.theme.AppTheme
-import com.voitenko.dev.kmminviteme.android.common.theme.MainTheme
+import com.voitenko.dev.kmminviteme.android.designsystem.AppTheme
 
 @Composable
 fun ImagePickerBlock(
@@ -30,7 +29,7 @@ fun ImagePickerBlock(
 ) = SimpleImage(
     modifier = Modifier
         .padding(8.dp)
-        .clip(AppTheme.shapes.medium)
+        .clip(RoundedCornerShape(8.dp))
         .background(AppTheme.colors.background)
         .alpha(alpha)
         .clickable { onClick?.invoke() },

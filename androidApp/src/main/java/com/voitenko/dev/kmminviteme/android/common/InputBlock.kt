@@ -12,7 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
-import com.voitenko.dev.kmminviteme.android.common.theme.AppTheme
+import com.voitenko.dev.kmminviteme.android.designsystem.AppTheme
 
 @Composable
 fun InputBlock(
@@ -21,7 +21,7 @@ fun InputBlock(
     onValueChange: ((String) -> Unit)? = null,
     onClick: (() -> Unit)? = null,
     placeholder: String = "",
-    textStyle: TextStyle = AppTheme.typography.input,
+    textStyle: TextStyle = AppTheme.typography.H2,
     maxLines: Int = Int.MAX_VALUE,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions()

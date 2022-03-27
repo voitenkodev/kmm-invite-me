@@ -15,8 +15,8 @@ import androidx.compose.ui.unit.dp
 import com.voitenko.dev.kmminviteme.android.common.ErrorBlock
 import com.voitenko.dev.kmminviteme.android.common.ExpanderBlock
 import com.voitenko.dev.kmminviteme.android.common.InputBlock
-import com.voitenko.dev.kmminviteme.android.common.theme.AppTheme
-import com.voitenko.dev.kmminviteme.android.common.theme.MainTheme
+import com.voitenko.dev.kmminviteme.android.designsystem.AppTheme
+import com.voitenko.dev.kmminviteme.android.designsystem.Theme
 
 @Composable
 fun ExpandInputBlock(
@@ -40,7 +40,7 @@ fun ExpandInputBlock(
                 text = state.input.text,
                 onClick = onClick,
                 placeholder = state.input.placeholder,
-                textStyle = AppTheme.typography.input.copy(color = Color.Black),
+                textStyle = AppTheme.typography.H2.copy(color = Color.Black),
                 keyboardActions = keyboardActions, /*KeyboardActions(onNext = { vm.want(ExpanderFeature.Wish.Expand) })*/
                 onValueChange = onValueChange, /*vm.want(NewEventViewModel.TAG.TITLE_INPUT, InputFeature.Wish.SetText(it))*/
                 keyboardOptions = KeyboardOptions(
@@ -73,7 +73,7 @@ fun ExpandInputBlock_Preview() {
             expandHeight = (56 * 1.7).toInt(),
         )
     )
-    MainTheme {
+    Theme {
         Column {
             ExpandInputBlock(
                 modifier = Modifier.padding(top = 4.dp),

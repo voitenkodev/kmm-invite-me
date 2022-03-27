@@ -8,8 +8,8 @@ import androidx.compose.material.Surface
 import androidx.compose.material.contentColorFor
 import com.google.accompanist.insets.ProvideWindowInsets
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import com.voitenko.dev.kmminviteme.android.common.theme.AppTheme
-import com.voitenko.dev.kmminviteme.android.common.theme.MainTheme
+import com.voitenko.dev.kmminviteme.android.designsystem.AppTheme
+import com.voitenko.dev.kmminviteme.android.designsystem.Theme
 
 class MainActivity : ComponentActivity() {
 
@@ -19,7 +19,7 @@ class MainActivity : ComponentActivity() {
             val systemUiController = rememberSystemUiController()
             val useDarkIcons = MaterialTheme.colors.isLight
 
-            MainTheme(
+            Theme(
                 content = {
                     systemUiController.setSystemBarsColor(
                         color = AppTheme.colors.background,

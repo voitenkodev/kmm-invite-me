@@ -16,7 +16,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.voitenko.dev.kmminviteme.android.common.theme.AppTheme
+import com.voitenko.dev.kmminviteme.android.designsystem.AppTheme
 import com.voitenko.dev.kmminviteme.android.common.base.box.Center
 
 @Composable
@@ -29,7 +29,7 @@ fun Title(
     SimpleText(
         modifier = Modifier.padding(bottom = 6.dp),
         text = text,
-        textStyle = AppTheme.typography.title.copy(color = color),
+        textStyle = AppTheme.typography.H3.copy(color = color),
         maxLines = maxLines,
     )
 }
@@ -44,7 +44,7 @@ fun Description(
     SimpleText(
         modifier = Modifier,
         text = text,
-        textStyle = AppTheme.typography.description.copy(color = color),
+        textStyle = AppTheme.typography.BODY2.copy(color = color),
         maxLines = maxLines,
     )
 }
@@ -73,7 +73,7 @@ fun ToolBar(
                 .scale(scale)
                 .padding(start = 20.dp, end = 20.dp),
             text = text,
-            textStyle = AppTheme.typography.toolbar.copy(color = color),
+            textStyle = AppTheme.typography.H1.copy(color = color),
             maxLines = 1,
         )
     }

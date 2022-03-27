@@ -12,9 +12,7 @@ import androidx.compose.ui.unit.dp
 import com.voitenko.dev.kmminviteme.android.common.ErrorBlock
 import com.voitenko.dev.kmminviteme.android.common.ExpanderBlock
 import com.voitenko.dev.kmminviteme.android.common.ImagePickerBlock
-import com.voitenko.dev.kmminviteme.android.common.theme.MainTheme
-import com.voitenko.dev.kmminviteme.android.features.expandTextInput.ExpandInputBlock
-import com.voitenko.dev.kmminviteme.android.features.expandTextInput.ExpandInputFeature
+import com.voitenko.dev.kmminviteme.android.designsystem.Theme
 
 @Composable
 fun ExpandImagePickBlock(
@@ -58,7 +56,7 @@ fun ExpandImagePickBlock_Preview() {
             expandHeight = (56 * 2.5).toInt(),
         )
     )
-    MainTheme {
+    Theme {
         Column {
             ExpandImagePickBlock(
                 modifier = Modifier.padding(top = 4.dp),

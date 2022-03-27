@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -19,7 +20,7 @@ import com.voitenko.dev.kmminviteme.android.common.base.box.ExpanderContent
 import com.voitenko.dev.kmminviteme.android.common.base.box.FlipType
 import com.voitenko.dev.kmminviteme.android.common.base.box.FlipperContent
 import com.voitenko.dev.kmminviteme.android.common.base.floatState
-import com.voitenko.dev.kmminviteme.android.common.theme.AppTheme
+import com.voitenko.dev.kmminviteme.android.designsystem.AppTheme
 
 const val defaultBlockSize = 56
 
@@ -70,8 +71,8 @@ private fun ExpandBody(
 ) = Row(
     modifier = Modifier
         .size(expander.width, expander.height)
-        .clip(AppTheme.shapes.medium)
-        .background(color = expander.color1, shape = AppTheme.shapes.medium),
+        .clip(RoundedCornerShape(8.dp))
+        .background(color = expander.color1, shape = RoundedCornerShape(8.dp)),
     content = {
         FlipperNumber(flip = isExpand, number = number)
         content.invoke(expander.alpha1)

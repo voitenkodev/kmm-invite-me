@@ -8,7 +8,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.viewinterop.AndroidView
 import com.voitenko.dev.kmminviteme.android.common.BottomSheetBlock
-import com.voitenko.dev.kmminviteme.android.common.theme.MainTheme
+import com.voitenko.dev.kmminviteme.android.designsystem.Theme
 import java.time.LocalDate
 
 
@@ -50,7 +50,7 @@ fun ExpandImagePickBlock_Preview() {
     val preview = CalendarPickerFeature.State(
         isOpen = true
     )
-    MainTheme {
+    Theme {
         CalendarPickerBlock(
             state = preview,
             content = { },

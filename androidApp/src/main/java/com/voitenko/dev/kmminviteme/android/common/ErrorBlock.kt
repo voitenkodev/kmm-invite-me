@@ -4,7 +4,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.voitenko.dev.kmminviteme.android.common.base.Description
-import com.voitenko.dev.kmminviteme.android.common.theme.AppTheme
+import com.voitenko.dev.kmminviteme.android.designsystem.AppTheme
 
 @Composable
 fun ErrorBlock(

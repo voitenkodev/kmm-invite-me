@@ -70,7 +70,6 @@ private fun Content(vm: NewEventVM) = ScrollRoot(
         )
     }
 ) {
-//    val (titleInput, descriptionInput) = remember { FocusRequester.createRefs() }
 
     item {
         ExpandInputBlock(
