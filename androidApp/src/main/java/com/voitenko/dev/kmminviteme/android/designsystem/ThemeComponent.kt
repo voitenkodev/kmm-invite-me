@@ -14,4 +14,5 @@ object AppTheme {
 }
 
 val LocalAppColors = staticCompositionLocalOf<AppColor> { error("No colors provided") }
+
 val LocalAppTypography = staticCompositionLocalOf<AppTypography> { error("No font provided") }

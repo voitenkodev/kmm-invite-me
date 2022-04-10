@@ -8,7 +8,6 @@ dependencies {
     implementation(project(":shared"))
 
     implementation("io.github.voitenkodev:mvi-core:1.0.6")
-
     implementation(libs.kotlinx.kotlin)
     implementation(libs.kotlinx.coroutines)
     implementation(libs.kotlinx.datetime)
@@ -24,15 +23,17 @@ dependencies {
     implementation(libs.compose.tooling)
     implementation(libs.compose.preview)
     implementation(libs.compose.activity)
-    implementation(libs.compose.foundation)
-    implementation(libs.compose.material)
-    implementation(libs.compose.icons)
-    implementation(libs.compose.icons.extensions)
     implementation(libs.compose.navigation)
-    implementation(libs.compose.accompanist.animation)
-    implementation(libs.compose.accompanist.insets)
+    implementation(libs.compose.material)
+    implementation(libs.compose.icons.extensions) // default icons (maybe remove it)
+
     implementation(libs.compose.accompanist.system)
-    implementation(libs.compose.viewmodel)
+
+//    implementation(libs.compose.icons) // remove in feature
+//    implementation(libs.compose.foundation)
+//    implementation(libs.compose.accompanist.animation)
+//    implementation(libs.compose.accompanist.insets)
+//    implementation(libs.compose.viewmodel)
 }
 
 
@@ -61,5 +62,6 @@ fun com.android.build.gradle.internal.dsl.BaseAppModuleExtension.ignoreExperimen
             "-Xuse-experimental=androidx.compose.animation.ExperimentalAnimationApi",
             "-Xuse-experimental=androidx.compose.ui.ExperimentalComposeUiApi",
             "-Xuse-experimental=androidx.compose.foundation.ExperimentalFoundationApi",
+            "-Xuse-experimental=androidx.compose.ui.unit.ExperimentalUnitApi",
         )
     }

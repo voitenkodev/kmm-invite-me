@@ -7,7 +7,7 @@ import androidx.compose.ui.graphics.Color
 fun lightPalette() = AppColor(
     background = crystal,
     control = darkPurple,
-    primary = Color.White,
+    primary = darkPurple,
     primaryText = darkPurple,
     secondary = Color.White,
     secondaryText = Color.Black,
