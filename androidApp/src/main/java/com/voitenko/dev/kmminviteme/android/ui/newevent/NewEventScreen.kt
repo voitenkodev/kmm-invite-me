@@ -12,16 +12,20 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.voitenko.dev.kmminviteme.android.designsystem.components.*
-import com.voitenko.dev.kmminviteme.android.neomorph.*
+import com.voitenko.dev.kmminviteme.android.neomorph.Flat
+import com.voitenko.dev.kmminviteme.android.neomorph.Pressed
+import com.voitenko.dev.kmminviteme.android.neomorph.RoundedCorner
+import com.voitenko.dev.kmminviteme.android.neomorph.neu
 
 @Composable
 fun NewEventScreen(navController: NavController) {
+
     val almostWhite = Color(236, 234, 235)
 
     Box(
         Modifier
             .fillMaxSize()
-            .background(Color.White)
+            .background(almostWhite)
             .padding(20.dp),
         contentAlignment = Alignment.BottomCenter
     ) {
@@ -29,27 +33,16 @@ fun NewEventScreen(navController: NavController) {
             modifier = Modifier
                 .fillMaxWidth()
                 .aspectRatio(1f)
-                .neu(
-                    lightShadowColor = Color.White,
-                    darkShadowColor = Color.LightGray,
-                    shadowElevation = 4.dp,
-                    lightSource = LightSource.LEFT_TOP,
-                    shape = Pressed(RoundedCorner(24.dp))
-                )
+                .neu(shape = Pressed(RoundedCorner(24.dp)))
                 .padding(20.dp)
         ) {
 
             Card(
                 modifier = Modifier
                     .size(56.dp)
-                    .neu(
-                        lightShadowColor = Color.White,
-                        darkShadowColor = Color.LightGray,
-                        shadowElevation = 4.dp,
-                        lightSource = LightSource.LEFT_TOP,
-                        shape = Flat(RoundedCorner(24.dp)),
-                    ),
+                    .neu(shape = Flat(RoundedCorner(24.dp))),
                 elevation = 0.dp,
+                backgroundColor = Color.Cyan,
                 shape = RoundedCornerShape(24.dp),
             ) {
                 // Add child components here.
