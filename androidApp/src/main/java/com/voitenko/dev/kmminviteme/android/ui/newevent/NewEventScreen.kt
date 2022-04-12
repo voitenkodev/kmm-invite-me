@@ -1,47 +1,50 @@
 package com.voitenko.dev.kmminviteme.android.ui.newevent
 
-import android.net.Uri
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Icon
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Clear
-import androidx.compose.material.icons.filled.Image
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.google.accompanist.coil.rememberCoilPainter
-import com.voitenko.dev.kmminviteme.android.designsystem.AppTheme
 import com.voitenko.dev.kmminviteme.android.designsystem.ArcShape
 import com.voitenko.dev.kmminviteme.android.designsystem.components.*
+import com.voitenko.dev.kmminviteme.android.designsystem.components.box.FlatBox
 
 @Composable
 fun NewEventScreen(navController: NavController) {
 
     val almostWhite = Color(236, 234, 235)
 
-    Box(modifier = Modifier.fillMaxSize()) {
-        Box(
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.spacedBy(24.dp)
+    ) {
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .aspectRatio(2f)
                 .shadow(elevation = 4.dp, shape = ArcShape())
                 .background(color = almostWhite, shape = ArcShape())
-                .padding(24.dp)
+                .padding(24.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Switch()
+
+            Check()
+        }
+
+        FlatBox(
+            modifier = Modifier
+                .padding(horizontal = 24.dp)
+                .fillMaxWidth()
+                .height(56.dp),
+            radius = 16.dp,
+            color = almostWhite
+        ) {
+
         }
     }
 }

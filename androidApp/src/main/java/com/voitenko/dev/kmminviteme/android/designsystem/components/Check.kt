@@ -21,7 +21,7 @@ import com.voitenko.dev.kmminviteme.android.designsystem.components.box.PressedB
 
 @Preview(name = "switch")
 @Composable
-fun CheckBox(
+fun Check(
     initial: Boolean = false
 ) {
     val almostWhite = Color(236, 234, 235)
@@ -33,7 +33,7 @@ fun CheckBox(
             .clip(RoundedCornerShape(2.dp))
             .clickable { select.value = select.value.not() },
         radius = 2.dp,
-        color = almostWhite
+        color = Color.White
     ) {
         AnimatedVisibility(
             enter = fadeIn(),
