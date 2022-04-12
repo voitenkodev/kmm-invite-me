@@ -1,4 +1,4 @@
-package com.voitenko.dev.kmminviteme.android.neomorph
+package com.voitenko.dev.kmminviteme.android.designsystem
 
 import android.graphics.BlurMaskFilter
 import androidx.compose.ui.Modifier

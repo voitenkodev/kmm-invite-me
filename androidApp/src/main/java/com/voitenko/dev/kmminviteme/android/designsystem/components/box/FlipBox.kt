@@ -1,4 +1,4 @@
-package com.voitenko.dev.kmminviteme.android.old.common.base.box
+package com.voitenko.dev.kmminviteme.android.designsystem.components.box
 
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
@@ -9,27 +9,25 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 
-enum class FlipType { X, Y, Z }
-
 @Composable
-fun FlipperContent(
+fun FlipBox(
     modifier: Modifier = Modifier,
-    type: FlipType,
-    flip: Boolean,
+    degree: Float = 180f,
     frontContent: @Composable () -> Unit,
     backContent: @Composable () -> Unit,
+    flip: Boolean
 ) {
-
     val rotation by animateFloatAsState(
-        if (flip) 0f else 360f, spring(stiffness = Spring.StiffnessLow)
+        if (flip) 0f else degree, spring(stiffness = Spring.StiffnessLow)
     )
-//    remember { mutableStateOf(rotation); }
+
     Box(
         modifier = modifier.graphicsLayer {
-            if (type == FlipType.Y) rotationY = rotation
-            if (type == FlipType.X) rotationX = rotation
-            if (type == FlipType.Z) rotationZ = rotation
+            rotationY = rotation
             cameraDistance = 8 * density
-        }
-    ) { if (rotation <= 180) frontContent.invoke() else backContent.invoke() }
+        },
+        content = {
+            if (rotation <= 90) frontContent.invoke()
+            else backContent.invoke()
+        })
 }
