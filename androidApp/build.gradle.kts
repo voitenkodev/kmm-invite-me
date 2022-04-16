@@ -17,7 +17,7 @@ dependencies {
     implementation(libs.koin.android)
 
     implementation(libs.coil.core)
-    implementation(libs.coil.tooling)
+//    implementation(libs.coil.tooling)
 
     implementation(libs.compose.ui)
     implementation(libs.compose.tooling)

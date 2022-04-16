@@ -1,4 +1,4 @@
-package com.voitenko.dev.kmminviteme.android.box
+package com.voitenko.dev.kmminviteme.android.designsystem.components
 
 import android.view.MotionEvent
 import androidx.compose.animation.ExperimentalAnimationApi
@@ -21,20 +21,19 @@ private val maxTranslation = 140.dp.value
 @ExperimentalAnimationApi
 @ExperimentalComposeUiApi
 @Composable
-fun ParallaxBox(
-    topLevelContent: @Composable BoxScope.() -> Unit,
-    bottomLevelContent: @Composable BoxScope.() -> Unit
+fun RideBox(
+    modifier: Modifier = Modifier, content: @Composable BoxScope.() -> Unit
 ) {
 
     var angle by remember { mutableStateOf(Pair(0f, 0f)) }
     var start by remember { mutableStateOf(Pair(-1f, -1f)) }
     var viewSize by remember { mutableStateOf(Size.Zero) }
 
-    Box(modifier = Modifier
+    Box(
+        modifier = modifier
         .onGloballyPositioned { coordinates ->
             viewSize = Size(
-                width = coordinates.size.width.toFloat(),
-                height = coordinates.size.height.toFloat()
+                width = coordinates.size.width.toFloat(), height = coordinates.size.height.toFloat()
             )
         }
         .pointerInteropFilter { m ->
@@ -61,27 +60,13 @@ fun ParallaxBox(
                 }
             }
             true
-        }) {
-
-        Box(
-            modifier = Modifier.graphicsLayer(
-                transformOrigin = TransformOrigin(0.5f, 0.5f),
-                rotationY = animateFloatAsState(-angle.first).value,
-                rotationX = animateFloatAsState(angle.second).value,
-                cameraDistance = 16.dp.value
-            ), content = bottomLevelContent
-        )
-        Box(
-            modifier = Modifier.graphicsLayer(
-                transformOrigin = TransformOrigin(0.5f, 0.5f),
-                rotationY = animateFloatAsState(-angle.first).value,
-                rotationX = animateFloatAsState(angle.second).value,
-                cameraDistance = 16.dp.value,
-                translationX = -getTranslation(angle.first, maxTranslation),
-                translationY = -getTranslation(angle.second, maxTranslation),
-            ), content = topLevelContent
-        )
-    }
+        }
+        .graphicsLayer(
+            transformOrigin = TransformOrigin(0.5f, 0.5f),
+            rotationY = animateFloatAsState(-angle.first).value,
+            rotationX = animateFloatAsState(angle.second).value,
+            cameraDistance = 16.dp.value
+        ), content = content)
 }
 
 private fun getRotationAngles(

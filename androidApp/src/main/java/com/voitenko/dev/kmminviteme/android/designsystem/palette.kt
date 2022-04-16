@@ -46,7 +46,9 @@ val lightYellow = Color(0xFFFADE4B)
 val lightRed = Color(0xFFEA3469)
 val darkRed = Color(0xFFC52B58)
 
+val cyan1shadow1 = Color(0xFF81E4C6)
 val cyan1 = Color(0xFF28D8A3)
 val cyan2 = Color(0xFF00BEB2)
+val cyan2shadow2 = Color(0xFF06948B)
 
 val crystal = Color(0xFFD0DBE5)

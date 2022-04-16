@@ -13,7 +13,7 @@ compose-activity-vers = "1.5.0-alpha03"
 compose-navigation-vers = "2.4.1"
 compose-accompanist-vers = "0.24.4-alpha"
 compose-viewmodel-vers = "2.5.0-alpha04"
-coil-vers = "2.0.0-rc02"
+coil-vers = "2.0.0-rc03"
 coil-tooling-vers = "0.15.0"
 
 [libraries]
@@ -57,8 +57,8 @@ compose-accompanist-insets = { module = "com.google.accompanist:accompanist-inse
 compose-accompanist-system = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "compose-accompanist-vers" }
 compose-accompanist-animation = { module = "com.google.accompanist:accompanist-navigation-animation", version.ref = "compose-accompanist-vers" }
 
-coil-core = { module = "io.coil-kt:coil", version.ref = "coil-vers" }
-coil-tooling = { module = "com.google.accompanist:accompanist-coil", version.ref = "coil-tooling-vers" }
+coil-core = { module = "io.coil-kt:coil-compose", version.ref = "coil-vers" }
+#coil-tooling = { module = "com.google.accompanist:accompanist-coil", version.ref = "coil-tooling-vers" }
 
 [plugins]
 kmm-convention = { id = "convention.kmm", version = "1.0" }
